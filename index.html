@@ -5,64 +5,48 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-/* BASIC */
-body { font-family: Arial; margin:0; padding:0; }
-header{ background:#222; color:white; padding:10px; text-align:center; position:relative; }
-#date{ position:absolute; right:10px; top:10px; font-size:12px; }
-.product { border:1px solid #ccc; padding:10px; margin:10px; text-align:center; }
-img { width:150px; }
-button { padding:8px 12px; margin-top:5px; }
-footer{ background:#222; color:white; text-align:center; padding:10px; margin-top:20px; }
-a{ color:white; }
-
-/* HAMBURGER MENU */
-.menu { position:absolute; left:10px; top:10px; cursor:pointer; }
-.sidebar{ position:fixed; top:0; left:-250px; width:200px; height:100vh; background:#333; color:white; padding:20px; transition:.3s; }
-.sidebar a{ display:block; margin:8px 0; color:white; text-decoration:none; }
-.sidebar.show{ left:0; }
-
-/* POPUP ORDER FORM */
-#orderModal{ display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.6);}
-.modal-content{ background:white; padding:15px; width:90%; max-width:400px; margin:80px auto; }
+body{font-family: 'Segoe UI', sans-serif; margin:0; background:#f7f7f7;}
+header{background:linear-gradient(45deg,#651fff,#00bcd4); color:white; padding:15px; text-align:center; position:relative;}
+#date{position:absolute; right:10px; top:10px; font-size:12px;}
+.menu{position:absolute; left:10px; top:10px; cursor:pointer;}
+.sidebar{position:fixed; top:0; left:-250px; width:200px; height:100vh; background:#333; color:white; padding:20px; transition:.3s;}
+.sidebar a{display:block; margin:8px 0; color:white; text-decoration:none;}
+.sidebar.show{left:0;} 
+.product{background:white; padding:15px; margin:10px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,.1);
+         transition:.4s; text-align:center;}
+.product:hover{transform:scale(1.05);}
+img{width:150px; border-radius:8px;}
+button{padding:8px 12px; margin-top:5px; border:none; background:#651fff; color:white;
+       border-radius:20px; cursor:pointer; transition:.3s;}
+button:hover{background:#00bcd4;}
+footer{background:#222; color:white; text-align:center; padding:10px;}
+@keyframes fade {from{opacity:0;} to{opacity:1;}}
+.product{animation:fade .5s ease-in;}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <header>
   <div class="menu" onclick="openMenu()">☰</div>
   <h2>Moon Star Digital Shop</h2>
   <span id="date"></span>
 </header>
 
-<!-- SIDEBAR -->
 <div class="sidebar" id="sidebar">
   <a href="#">Home</a>
   <a href="#">About Us</a>
   <a href="#">Privacy Policy</a>
   <a href="#">Contact Us</a>
-  <a href="https://google.com">External Link</a>
   <button onclick="closeMenu()">Close</button>
 </div>
 
-<!-- PRODUCT LIST -->
 <div id="product-list"></div>
 
-<!-- ADD PRODUCT FORM -->
-<h3 style="padding:10px;">Add New Product</h3>
-<div style="padding:10px;">
-  <input id="img" placeholder="Image URL"><br>
-  <input id="title" placeholder="Product Title"><br>
-  <input id="price" placeholder="Price"><br>
-  <textarea id="desc" placeholder="Description"></textarea><br>
-  <button onclick="addProduct()">Add Product</button>
-</div>
-
-<!-- ORDER POPUP -->
-<div id="orderModal">
-  <div class="modal-content">
+<!-- POPUP ORDER FORM -->
+<div id="orderModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+background:rgba(0,0,0,.6);">
+  <div style="background:white; padding:15px; width:90%; max-width:400px; margin:80px auto; border-radius:12px;">
     <h3>Order Form</h3>
-    <label>Product:</label><br>
     <input id="op_product" readonly><br>
     <input id="op_qty" placeholder="Quantity"><br>
     <input id="op_name" placeholder="Your Name"><br>
@@ -74,39 +58,31 @@ a{ color:white; }
   </div>
 </div>
 
-<!-- FOOTER -->
 <footer>
-  © Moon Star Digital Shop | <a href="#">Privacy Policy</a> | <a href="#">Contact Us</a>
+  © Moon Star Digital Shop<br>
+  <a href="#">Privacy Policy</a> | <a href="#">Contact Us</a>
 </footer>
 
 <script>
+/* DATE */
+document.getElementById("date").innerText = new Date().toLocaleDateString();
+
 /* SIDEBAR */
 function openMenu(){ document.getElementById("sidebar").classList.add("show"); }
 function closeMenu(){ document.getElementById("sidebar").classList.remove("show"); }
 
-/* SHOW DATE */
-let d = new Date();
-document.getElementById("date").innerText = d.toLocaleDateString();
+/* PRODUCT ARRAY */
+const products = [
+  {img:'https://via.placeholder.com/150', title:'Demo Product 1', price:'599', desc:'Best Quality Product'},
+  {img:'https://via.placeholder.com/150', title:'Demo Product 2', price:'899', desc:'Durable & Stylish'},
+  {img:'https://via.placeholder.com/150', title:'Demo Product 3', price:'399', desc:'Budget Friendly'},
+];
 
-/* STORE SYSTEM */
-let products = JSON.parse(localStorage.getItem('store')) || [];
-
-function addProduct(){
-  let p = {
-    img: img.value,
-    title: title.value,
-    price: price.value,
-    desc: desc.value
-  };
-  products.push(p);
-  localStorage.setItem('store', JSON.stringify(products));
-  showProducts();
-}
-
+/* SHOW PRODUCTS */
 function showProducts(){
-  let html = '';
-  products.forEach((p)=>{
-    html += `
+  let html='';
+  products.forEach(p=>{
+    html+=`
       <div class="product">
         <img src="${p.img}">
         <h3>${p.title}</h3>
@@ -118,7 +94,6 @@ function showProducts(){
   });
   document.getElementById('product-list').innerHTML = html;
 }
-
 showProducts();
 
 /* ORDER POPUP */
@@ -126,21 +101,18 @@ function openOrder(title){
   document.getElementById("op_product").value = title;
   document.getElementById("orderModal").style.display="block";
 }
-
 function closeModal(){ document.getElementById("orderModal").style.display="none"; }
 
-/* SHARE BUTTON */
+/* SHARE */
 function shareProduct(title,img){
-  if(navigator.share){
-    navigator.share({ title, text:title, url:img });
-  } else{ alert("Share not supported."); }
+  if(navigator.share){ navigator.share({ title, text:title, url:img }); }
+  else alert("Share not supported.");
 }
 
-/* GOOGLE SHEET SUBMISSION */
-const SHEET_URL = "🔴 YOUR_WEB_APP_URL_HERE 🔴";  // Change here
-
+/* GOOGLE SHEET */
+const SHEET_URL = "🔴 YOUR_WEB_APP_URL_HERE 🔴";
 function submitOrder(){
-  fetch(SHEET_URL, {
+  fetch(SHEET_URL,{
     method:"POST",
     body:JSON.stringify({
       product: op_product.value,
