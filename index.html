@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Moon Star Digital Shop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+/* BASIC */
+body { font-family: Arial; margin:0; padding:0; }
+header{ background:#222; color:white; padding:10px; text-align:center; position:relative; }
+#date{ position:absolute; right:10px; top:10px; font-size:12px; }
+.product { border:1px solid #ccc; padding:10px; margin:10px; text-align:center; }
+img { width:150px; }
+button { padding:8px 12px; margin-top:5px; }
+footer{ background:#222; color:white; text-align:center; padding:10px; margin-top:20px; }
+a{ color:white; }
+
+/* HAMBURGER MENU */
+.menu { position:absolute; left:10px; top:10px; cursor:pointer; }
+.sidebar{ position:fixed; top:0; left:-250px; width:200px; height:100vh; background:#333; color:white; padding:20px; transition:.3s; }
+.sidebar a{ display:block; margin:8px 0; color:white; text-decoration:none; }
+.sidebar.show{ left:0; }
+
+/* POPUP ORDER FORM */
+#orderModal{ display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.6);}
+.modal-content{ background:white; padding:15px; width:90%; max-width:400px; margin:80px auto; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="menu" onclick="openMenu()">☰</div>
+  <h2>Moon Star Digital Shop</h2>
+  <span id="date"></span>
+</header>
+
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <a href="#">Home</a>
+  <a href="#">About Us</a>
+  <a href="#">Privacy Policy</a>
+  <a href="#">Contact Us</a>
+  <a href="https://google.com">External Link</a>
+  <button onclick="closeMenu()">Close</button>
+</div>
+
+<!-- PRODUCT LIST -->
+<div id="product-list"></div>
+
+<!-- ADD PRODUCT FORM -->
+<h3 style="padding:10px;">Add New Product</h3>
+<div style="padding:10px;">
+  <input id="img" placeholder="Image URL"><br>
+  <input id="title" placeholder="Product Title"><br>
+  <input id="price" placeholder="Price"><br>
+  <textarea id="desc" placeholder="Description"></textarea><br>
+  <button onclick="addProduct()">Add Product</button>
+</div>
+
+<!-- ORDER POPUP -->
+<div id="orderModal">
+  <div class="modal-content">
+    <h3>Order Form</h3>
+    <label>Product:</label><br>
+    <input id="op_product" readonly><br>
+    <input id="op_qty" placeholder="Quantity"><br>
+    <input id="op_name" placeholder="Your Name"><br>
+    <input id="op_email" placeholder="Email"><br>
+    <input id="op_mobile" placeholder="Mobile"><br>
+    <textarea id="op_address" placeholder="Address"></textarea><br>
+    <button onclick="submitOrder()">Submit</button>
+    <button onclick="closeModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  © Moon Star Digital Shop | <a href="#">Privacy Policy</a> | <a href="#">Contact Us</a>
+</footer>
+
+<script>
+/* SIDEBAR */
+function openMenu(){ document.getElementById("sidebar").classList.add("show"); }
+function closeMenu(){ document.getElementById("sidebar").classList.remove("show"); }
+
+/* SHOW DATE */
+let d = new Date();
+document.getElementById("date").innerText = d.toLocaleDateString();
+
+/* STORE SYSTEM */
+let products = JSON.parse(localStorage.getItem('store')) || [];
+
+function addProduct(){
+  let p = {
+    img: img.value,
+    title: title.value,
+    price: price.value,
+    desc: desc.value
+  };
+  products.push(p);
+  localStorage.setItem('store', JSON.stringify(products));
+  showProducts();
+}
+
+function showProducts(){
+  let html = '';
+  products.forEach((p)=>{
+    html += `
+      <div class="product">
+        <img src="${p.img}">
+        <h3>${p.title}</h3>
+        <p>₹${p.price}</p>
+        <p>${p.desc}</p>
+        <button onclick="openOrder('${p.title}')">Order Now</button>
+        <button onclick="shareProduct('${p.title}','${p.img}')">Share</button>
+      </div>`;
+  });
+  document.getElementById('product-list').innerHTML = html;
+}
+
+showProducts();
+
+/* ORDER POPUP */
+function openOrder(title){
+  document.getElementById("op_product").value = title;
+  document.getElementById("orderModal").style.display="block";
+}
+
+function closeModal(){ document.getElementById("orderModal").style.display="none"; }
+
+/* SHARE BUTTON */
+function shareProduct(title,img){
+  if(navigator.share){
+    navigator.share({ title, text:title, url:img });
+  } else{ alert("Share not supported."); }
+}
+
+/* GOOGLE SHEET SUBMISSION */
+const SHEET_URL = "🔴 YOUR_WEB_APP_URL_HERE 🔴";  // Change here
+
+function submitOrder(){
+  fetch(SHEET_URL, {
+    method:"POST",
+    body:JSON.stringify({
+      product: op_product.value,
+      qty: op_qty.value,
+      name: op_name.value,
+      email: op_email.value,
+      mobile: op_mobile.value,
+      address: op_address.value
+    })
+  }).then(()=> alert("Order Placed Successfully!"));
+  closeModal();
+}
+</script>
+</body>
+</html>
