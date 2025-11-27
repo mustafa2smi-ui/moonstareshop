@@ -5,23 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{font-family: 'Segoe UI', sans-serif; margin:0; background:#f7f7f7;}
-header{background:linear-gradient(45deg,#651fff,#00bcd4); color:white; padding:15px; text-align:center; position:relative;}
-#date{position:absolute; right:10px; top:10px; font-size:12px;}
-.menu{position:absolute; left:10px; top:10px; cursor:pointer;}
-.sidebar{position:fixed; top:0; left:-250px; width:200px; height:100vh; background:#333; color:white; padding:20px; transition:.3s;}
-.sidebar a{display:block; margin:8px 0; color:white; text-decoration:none;}
-.sidebar.show{left:0;} 
-.product{background:white; padding:15px; margin:10px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,.1);
-         transition:.4s; text-align:center;}
+body{font-family:'Segoe UI',sans-serif; margin:0; background:#f7f7f7;}
+header{background:linear-gradient(45deg,#651fff,#00bcd4);color:white;padding:15px;text-align:center;position:relative;}
+#date{position:absolute;right:10px;top:10px;font-size:12px;}
+.menu{position:absolute;left:10px;top:10px;cursor:pointer;}
+.product{background:white;padding:15px;margin:10px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.1);transition:.4s;text-align:center;}
 .product:hover{transform:scale(1.05);}
-img{width:150px; border-radius:8px;}
-button{padding:8px 12px; margin-top:5px; border:none; background:#651fff; color:white;
-       border-radius:20px; cursor:pointer; transition:.3s;}
+img{width:150px;border-radius:8px;}
+button{padding:8px 12px;margin-top:5px;border:none;background:#651fff;color:white;
+       border-radius:20px;cursor:pointer;transition:.3s;}
 button:hover{background:#00bcd4;}
-footer{background:#222; color:white; text-align:center; padding:10px;}
-@keyframes fade {from{opacity:0;} to{opacity:1;}}
-.product{animation:fade .5s ease-in;}
+footer{background:#222;color:white;text-align:center;padding:10px;margin-top:20px;}
+.slide-form{max-height:0;overflow:hidden;transition:max-height .5s ease;border-top:1px solid #ddd;margin-top:10px;padding:0 10px;}
+.form-field{width:90%;padding:8px;margin:5px 0;border:1px solid #ccc;border-radius:8px;}
+.submit-btn{background:#004d40;}
+.cancel-btn{background:#b71c1c;}
 </style>
 </head>
 <body>
@@ -32,31 +30,7 @@ footer{background:#222; color:white; text-align:center; padding:10px;}
   <span id="date"></span>
 </header>
 
-<div class="sidebar" id="sidebar">
-  <a href="#">Home</a>
-  <a href="#">About Us</a>
-  <a href="#">Privacy Policy</a>
-  <a href="#">Contact Us</a>
-  <button onclick="closeMenu()">Close</button>
-</div>
-
 <div id="product-list"></div>
-
-<!-- POPUP ORDER FORM -->
-<div id="orderModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-background:rgba(0,0,0,.6);">
-  <div style="background:white; padding:15px; width:90%; max-width:400px; margin:80px auto; border-radius:12px;">
-    <h3>Order Form</h3>
-    <input id="op_product" readonly><br>
-    <input id="op_qty" placeholder="Quantity"><br>
-    <input id="op_name" placeholder="Your Name"><br>
-    <input id="op_email" placeholder="Email"><br>
-    <input id="op_mobile" placeholder="Mobile"><br>
-    <textarea id="op_address" placeholder="Address"></textarea><br>
-    <button onclick="submitOrder()">Submit</button>
-    <button onclick="closeModal()">Cancel</button>
-  </div>
-</div>
 
 <footer>
   © Moon Star Digital Shop<br>
@@ -64,12 +38,7 @@ background:rgba(0,0,0,.6);">
 </footer>
 
 <script>
-/* DATE */
 document.getElementById("date").innerText = new Date().toLocaleDateString();
-
-/* SIDEBAR */
-function openMenu(){ document.getElementById("sidebar").classList.add("show"); }
-function closeMenu(){ document.getElementById("sidebar").classList.remove("show"); }
 
 /* PRODUCT ARRAY */
 const products = [
@@ -78,30 +47,40 @@ const products = [
   {img:'https://via.placeholder.com/150', title:'Demo Product 3', price:'399', desc:'Budget Friendly'},
 ];
 
-/* SHOW PRODUCTS */
+/* SHOW PRODUCTS WITH SLIDE FORM */
 function showProducts(){
-  let html='';
-  products.forEach(p=>{
-    html+=`
-      <div class="product">
+  let html = '';
+  products.forEach((p, index)=>{
+    html += `
+      <div class="product" id="product-${index}">
         <img src="${p.img}">
         <h3>${p.title}</h3>
         <p>₹${p.price}</p>
         <p>${p.desc}</p>
-        <button onclick="openOrder('${p.title}')">Order Now</button>
+        <button onclick="toggleForm(${index}, '${p.title}')">Order Now</button>
         <button onclick="shareProduct('${p.title}','${p.img}')">Share</button>
+
+        <!-- SLIDE FORM -->
+        <div class="slide-form" id="form-${index}">
+          <input class="form-field" id="qty-${index}" placeholder="Quantity">
+          <input class="form-field" id="name-${index}" placeholder="Your Name">
+          <input class="form-field" id="email-${index}" placeholder="Email">
+          <input class="form-field" id="mobile-${index}" placeholder="Mobile">
+          <textarea class="form-field" id="address-${index}" placeholder="Address"></textarea>
+          <button class="submit-btn" onclick="submitOrder('${p.title}',${index})">Submit</button>
+          <button class="cancel-btn" onclick="toggleForm(${index})">Cancel</button>
+        </div>
       </div>`;
   });
   document.getElementById('product-list').innerHTML = html;
 }
 showProducts();
 
-/* ORDER POPUP */
-function openOrder(title){
-  document.getElementById("op_product").value = title;
-  document.getElementById("orderModal").style.display="block";
+/* SLIDE TOGGLE */
+function toggleForm(index){
+  const form = document.getElementById(`form-${index}`);
+  form.style.maxHeight = form.style.maxHeight ? null : "400px";
 }
-function closeModal(){ document.getElementById("orderModal").style.display="none"; }
 
 /* SHARE */
 function shareProduct(title,img){
@@ -111,19 +90,20 @@ function shareProduct(title,img){
 
 /* GOOGLE SHEET */
 const SHEET_URL = "🔴 YOUR_WEB_APP_URL_HERE 🔴";
-function submitOrder(){
+
+function submitOrder(title, index){
   fetch(SHEET_URL,{
     method:"POST",
     body:JSON.stringify({
-      product: op_product.value,
-      qty: op_qty.value,
-      name: op_name.value,
-      email: op_email.value,
-      mobile: op_mobile.value,
-      address: op_address.value
+      product: title,
+      qty: document.getElementById(`qty-${index}`).value,
+      name: document.getElementById(`name-${index}`).value,
+      email: document.getElementById(`email-${index}`).value,
+      mobile: document.getElementById(`mobile-${index}`).value,
+      address: document.getElementById(`address-${index}`).value
     })
-  }).then(()=> alert("Order Placed Successfully!"));
-  closeModal();
+  }).then(()=> alert("Order Placed!"));
+  toggleForm(index);
 }
 </script>
 </body>
