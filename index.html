@@ -9,6 +9,9 @@ body{font-family:'Segoe UI',sans-serif; margin:0; background:#f7f7f7;}
 header{background:linear-gradient(45deg,#651fff,#00bcd4);color:white;padding:15px;text-align:center;position:relative;}
 #date{position:absolute;right:10px;top:10px;font-size:12px;}
 .menu{position:absolute;left:10px;top:10px;cursor:pointer;}
+.sidebar{position:fixed; top:0; left:-250px; width:200px; height:100vh; background:#333; color:white; padding:20px; transition:.3s;}
+.sidebar a{display:block; margin:8px 0; color:white; text-decoration:none;}
+.sidebar.show{left:0;} 
 .product{background:white;padding:15px;margin:10px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.1);transition:.4s;text-align:center;}
 .product:hover{transform:scale(1.05);}
 img{width:150px;border-radius:8px;}
@@ -20,18 +23,31 @@ footer{background:#222;color:white;text-align:center;padding:10px;margin-top:20p
 .form-field{width:90%;padding:8px;margin:5px 0;border:1px solid #ccc;border-radius:8px;}
 .submit-btn{background:#004d40;}
 .cancel-btn{background:#b71c1c;}
+.error{color:#b71c1c;font-size:12px;font-weight:bold;}
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <header>
   <div class="menu" onclick="openMenu()">☰</div>
   <h2>Moon Star Digital Shop</h2>
   <span id="date"></span>
 </header>
 
+<!-- SIDEBAR -->
+<div class="sidebar" id="sidebar">
+  <a href="#">Home</a>
+  <a href="#">About Us</a>
+  <a href="#">Privacy Policy</a>
+  <a href="#">Contact Us</a>
+  <button onclick="closeMenu()">Close Menu</button>
+</div>
+
+<!-- PRODUCT LIST -->
 <div id="product-list"></div>
 
+<!-- FOOTER -->
 <footer>
   © Moon Star Digital Shop<br>
   <a href="#">Privacy Policy</a> | <a href="#">Contact Us</a>
@@ -40,14 +56,18 @@ footer{background:#222;color:white;text-align:center;padding:10px;margin-top:20p
 <script>
 document.getElementById("date").innerText = new Date().toLocaleDateString();
 
-/* PRODUCT ARRAY */
+/* SIDEBAR */
+function openMenu(){ document.getElementById("sidebar").classList.add("show"); }
+function closeMenu(){ document.getElementById("sidebar").classList.remove("show"); }
+
+/* PRODUCTS ARRAY */
 const products = [
   {img:'https://via.placeholder.com/150', title:'Demo Product 1', price:'599', desc:'Best Quality Product'},
   {img:'https://via.placeholder.com/150', title:'Demo Product 2', price:'899', desc:'Durable & Stylish'},
   {img:'https://via.placeholder.com/150', title:'Demo Product 3', price:'399', desc:'Budget Friendly'},
 ];
 
-/* SHOW PRODUCTS WITH SLIDE FORM */
+/* DISPLAY PRODUCTS */
 function showProducts(){
   let html = '';
   products.forEach((p, index)=>{
@@ -55,19 +75,19 @@ function showProducts(){
       <div class="product" id="product-${index}">
         <img src="${p.img}">
         <h3>${p.title}</h3>
-        <p>₹${p.price}</p>
+        <p><b>Price:</b> ₹${p.price}</p>
         <p>${p.desc}</p>
         <button onclick="toggleForm(${index}, '${p.title}')">Order Now</button>
-        <button onclick="shareProduct('${p.title}','${p.img}')">Share</button>
+        <button onclick="shareProduct(${index})">Share</button>
 
-        <!-- SLIDE FORM -->
         <div class="slide-form" id="form-${index}">
-          <input class="form-field" id="qty-${index}" placeholder="Quantity">
+          <input class="form-field" id="qty-${index}" placeholder="Quantity" oninput="numbersOnly(this)">
           <input class="form-field" id="name-${index}" placeholder="Your Name">
-          <input class="form-field" id="email-${index}" placeholder="Email">
-          <input class="form-field" id="mobile-${index}" placeholder="Mobile">
+          <input class="form-field" id="email-${index}" placeholder="Email" onblur="emailCheck(this)">
+          <input class="form-field" id="mobile-${index}" placeholder="Mobile Number" maxlength="10" oninput="numbersOnly(this)">
           <textarea class="form-field" id="address-${index}" placeholder="Address"></textarea>
-          <button class="submit-btn" onclick="submitOrder('${p.title}',${index})">Submit</button>
+          <div class="error" id="error-${index}"></div>
+          <button class="submit-btn" onclick="submitOrder('${p.title}', ${index})">Submit</button>
           <button class="cancel-btn" onclick="toggleForm(${index})">Cancel</button>
         </div>
       </div>`;
@@ -76,15 +96,29 @@ function showProducts(){
 }
 showProducts();
 
-/* SLIDE TOGGLE */
+/* SLIDE */
 function toggleForm(index){
   const form = document.getElementById(`form-${index}`);
-  form.style.maxHeight = form.style.maxHeight ? null : "400px";
+  form.style.maxHeight = form.style.maxHeight ? null : "450px";
+}
+
+/* ONLY NUMBERS */
+function numbersOnly(input){
+  input.value = input.value.replace(/[^0-9]/g,'');
+}
+
+/* EMAIL CHECK */
+function emailCheck(input){
+  const pattern = /^[^ ]+@[^ ]+\.[a-z]{2,3}$/;
+  if(!pattern.test(input.value)) input.style.border='2px solid red';
+  else input.style.border='2px solid green';
 }
 
 /* SHARE */
-function shareProduct(title,img){
-  if(navigator.share){ navigator.share({ title, text:title, url:img }); }
+function shareProduct(i){
+  let p = products[i];
+  let msg = `🛍 ${p.title}\n💰 Price: ₹${p.price}\n📜 ${p.desc}\n🌐 Visit: https://moonstarshop.com`;
+  if(navigator.share) navigator.share({ title:p.title, text:msg, url:p.img });
   else alert("Share not supported.");
 }
 
@@ -92,6 +126,11 @@ function shareProduct(title,img){
 const SHEET_URL = "🔴 YOUR_WEB_APP_URL_HERE 🔴";
 
 function submitOrder(title, index){
+  let e = document.getElementById(`error-${index}`);
+  if(!document.getElementById(`qty-${index}`).value) return e.innerText="Enter Quantity!";
+  if(!document.getElementById(`mobile-${index}`).value) return e.innerText="Enter Mobile Number!";
+  if(document.getElementById(`mobile-${index}`).value.length<10) return e.innerText="Mobile must be 10 digits!";
+  
   fetch(SHEET_URL,{
     method:"POST",
     body:JSON.stringify({
@@ -102,7 +141,7 @@ function submitOrder(title, index){
       mobile: document.getElementById(`mobile-${index}`).value,
       address: document.getElementById(`address-${index}`).value
     })
-  }).then(()=> alert("Order Placed!"));
+  }).then(()=> alert("Order Placed Successfully!"));
   toggleForm(index);
 }
 </script>
