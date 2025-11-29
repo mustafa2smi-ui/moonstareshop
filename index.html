@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StarShopList</title>
+<style>
+    body { font-family: Arial, sans-serif; background: #f2f2f2; margin: 0; padding: 10px; }
+    .header { text-align: center; margin-bottom: 15px; opacity: 0.3; font-size: 22px; font-weight: bold; }
+    .input-boxes { display: flex; gap: 5px; margin-bottom: 15px; }
+    input, select { padding: 7px; width: 100%; border: 1px solid #ccc; border-radius: 5px; }
+    button { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; margin-top: 5px; }
+    .add-btn { background: #2196F3; color: white; width: 70px; }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+    th { background: #333; color: white; }
+    .footer { margin-top: 20px; text-align: center; }
+    .btn-row button { margin: 4px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+    StarShopList – <span id="todayDate"></span>
+</div>
+
+<!-- INPUT SECTION -->
+<div class="input-boxes">
+    <input type="text" id="item" placeholder="Item Name">
+    <input type="number" id="qty" placeholder="Qty">
+    <input type="number" id="rate" placeholder="Rate">
+    <select id="category">
+        <option value="Grocery">Grocery</option>
+        <option value="Vegetable">Vegetable</option>
+        <option value="Fruit">Fruit</option>
+        <option value="Personal">Personal</option>
+        <option value="Other">Other</option>
+    </select>
+    <button class="add-btn" onclick="addItem()">ADD</button>
+</div>
+
+<!-- TABLE -->
+<table id="listTable">
+    <thead>
+        <tr>
+            <th>✔</th>
+            <th>Item</th>
+            <th>Qty</th>
+            <th>Rate</th>
+            <th>Amount</th>
+            <th>Category</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<h3>Total Amount: ₹<span id="totalAmount">0</span></h3>
+
+<!-- FOOTER BUTTONS -->
+<div class="btn-row">
+    <button onclick="exportCSV()">Export CSV</button>
+    <button onclick="shareList()">Share</button>
+    <button onclick="clearAll()">Clear All</button>
+</div>
+
+<div class="footer">© StarShopList | Built for Smart Shopping</div>
+
+<script>
+    // 📅 DATE AUTO SET
+    document.getElementById("todayDate").innerText = new Date().toLocaleDateString();
+
+    let list = JSON.parse(localStorage.getItem("shopList")) || [];
+
+    function save() {
+        localStorage.setItem("shopList", JSON.stringify(list));
+        render();
+    }
+
+    function addItem() {
+        const item = document.getElementById("item").value;
+        const qty = document.getElementById("qty").value;
+        const rate = document.getElementById("rate").value;
+        const category = document.getElementById("category").value;
+
+        if (!item || !qty || !rate) return alert("Fill all fields!");
+
+        list.push({ item, qty, rate, category, done: false });
+        save();
+    }
+
+    function render() {
+        const tbody = document.querySelector("#listTable tbody");
+        tbody.innerHTML = "";
+        let total = 0;
+
+        list.forEach((data, i) => {
+            let amount = data.qty * data.rate;
+            total += amount;
+
+            tbody.innerHTML += `
+                <tr>
+                    <td><input type="checkbox" ${data.done ? "checked" : ""} onchange="toggle(${i})"></td>
+                    <td>${data.item}</td>
+                    <td>${data.qty}</td>
+                    <td>${data.rate}</td>
+                    <td>${amount}</td>
+                    <td>${data.category}</td>
+                    <td><button onclick="edit(${i})">✏</button></td>
+                    <td><button onclick="del(${i})">❌</button></td>
+                </tr>`;
+        });
+        document.getElementById("totalAmount").innerText = total;
+    }
+
+    function toggle(i) { list[i].done = !list[i].done; save(); }
+    function edit(i) {
+        let data = prompt("Edit item (name,qty,rate)", `${list[i].item},${list[i].qty},${list[i].rate}`);
+        if (!data) return;
+        let [item, qty, rate] = data.split(",");
+        list[i] = { ...list[i], item, qty, rate };
+        save();
+    }
+    function del(i) { list.splice(i, 1); save(); }
+    function clearAll() { list = []; save(); }
+
+    function exportCSV() {
+        let csv = "Item,Qty,Rate,Amount,Category\n";
+        list.forEach(a => csv += `${a.item},${a.qty},${a.rate},${a.qty * a.rate},${a.category}\n`);
+        let link = document.createElement("a");
+        link.href = "data:text/csv," + encodeURI(csv);
+        link.download = "StarShopList.csv";
+        link.click();
+    }
+
+    function shareList() { alert("Use screenshot to share! (Future: WhatsApp share possible)"); }
+
+    render();
+</script>
+</body>
+</html>
