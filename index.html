@@ -5,38 +5,82 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>StarShopList</title>
 <style>
-    body { font-family: Arial, sans-serif; background: #f2f2f2; margin: 0; padding: 10px; }
-    .header { text-align: center; margin-bottom: 15px; opacity: 0.3; font-size: 22px; font-weight: bold; }
-    .input-boxes { display: flex; gap: 5px; margin-bottom: 15px; }
-    input, select { padding: 7px; width: 100%; border: 1px solid #ccc; border-radius: 5px; }
-    button { padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; margin-top: 5px; }
-    .add-btn { background: #2196F3; color: white; width: 70px; }
-    table { width: 100%; border-collapse: collapse; background: white; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-    th { background: #333; color: white; }
-    .footer { margin-top: 20px; text-align: center; }
-    .btn-row button { margin: 4px; }
+    body { font-family: Arial, sans-serif; background:#d5f8d4; margin:0; padding:10px; }
+
+    /* Header */
+    .header {
+        text-align:center; 
+        background:#007bff; 
+        color:white; 
+        padding:10px; 
+        font-size:22px; 
+        font-weight:bold;
+        border-bottom-left-radius:10px;
+        border-bottom-right-radius:10px;
+        opacity:0.95;
+    }
+
+    /* Input Section */
+    .input-section { 
+        display:flex; 
+        flex-direction:column; 
+        gap:10px; 
+        margin-top:15px; 
+        align-items:center;
+    }
+    .item-box {
+        width:85%;
+        padding:12px; 
+        border-radius:8px; 
+        border:1px solid #aaa;
+        font-size:16px;
+    }
+    .round-box {
+        width:40%;
+        padding:10px; 
+        border-radius:15px; 
+        border:1px solid #aaa;
+        text-align:center;
+        font-size:16px;
+    }
+    .add-btn {
+        width:60px; height:60px;
+        border-radius:50%;
+        background:#007bff;
+        color:white; font-size:18px;
+        cursor:pointer; border:none;
+    }
+
+    table { width:100%; border-collapse:collapse; background:white; margin-top:10px; }
+    th, td { border:1px solid #ddd; padding:8px; text-align:center; }
+    th { background:#333; color:white; }
+
+    /* Buttons bottom */
+    .btn-row { text-align:center; margin-top:20px; }
+    .btn-row button {
+        padding:10px 15px; border:none;
+        border-radius:8px; margin:5px;
+        color:white; cursor:pointer; 
+        font-weight:bold;
+    }
+    .export { background:#28a745; }
+    .share { background:#ff9800; }
+    .clear { background:#f44336; }
 </style>
 </head>
 <body>
 
-<div class="header">
-    StarShopList – <span id="todayDate"></span>
-</div>
+<div class="header">StarShopList – <span id="todayDate"></span></div>
 
 <!-- INPUT SECTION -->
-<div class="input-boxes">
-    <input type="text" id="item" placeholder="Item Name">
-    <input type="number" id="qty" placeholder="Qty">
-    <input type="number" id="rate" placeholder="Rate">
-    <select id="category">
-        <option value="Grocery">Grocery</option>
-        <option value="Vegetable">Vegetable</option>
-        <option value="Fruit">Fruit</option>
-        <option value="Personal">Personal</option>
-        <option value="Other">Other</option>
-    </select>
-    <button class="add-btn" onclick="addItem()">ADD</button>
+<div class="input-section">
+    <input type="text" id="item" class="item-box" placeholder="Enter Item Name">
+    
+    <div style="display:flex; gap:10px;">
+        <input type="text" id="qty" class="round-box" placeholder="Qty (Optional)">
+        <input type="text" id="rate" class="round-box" placeholder="Rate (Optional)">
+        <button class="add-btn" onclick="addItem()">+</button>
+    </div>
 </div>
 
 <!-- TABLE -->
@@ -48,46 +92,47 @@
             <th>Qty</th>
             <th>Rate</th>
             <th>Amount</th>
-            <th>Category</th>
-            <th>Edit</th>
-            <th>Delete</th>
         </tr>
     </thead>
     <tbody></tbody>
 </table>
 
-<h3>Total Amount: ₹<span id="totalAmount">0</span></h3>
+<h3 style="text-align:center;">Total Amount: ₹<span id="totalAmount">0</span></h3>
 
 <!-- FOOTER BUTTONS -->
 <div class="btn-row">
-    <button onclick="exportCSV()">Export CSV</button>
-    <button onclick="shareList()">Share</button>
-    <button onclick="clearAll()">Clear All</button>
+    <button class="export" onclick="exportCSV()">Export CSV</button>
+    <button class="share" onclick="shareList()">Share</button>
+    <button class="clear" onclick="clearAll()">Clear All</button>
 </div>
 
-<div class="footer">© StarShopList | Built for Smart Shopping</div>
-
 <script>
-    // 📅 DATE AUTO SET
-    document.getElementById("todayDate").innerText = new Date().toLocaleDateString();
+    document.getElementById("todayDate").innerText =
+        new Date().toLocaleDateString();
 
     let list = JSON.parse(localStorage.getItem("shopList")) || [];
 
-    function save() {
-        localStorage.setItem("shopList", JSON.stringify(list));
-        render();
-    }
+    function save() { localStorage.setItem("shopList", JSON.stringify(list)); render(); }
 
     function addItem() {
-        const item = document.getElementById("item").value;
-        const qty = document.getElementById("qty").value;
-        const rate = document.getElementById("rate").value;
-        const category = document.getElementById("category").value;
+        const item = document.getElementById("item").value.trim();
+        let qty = document.getElementById("qty").value.trim();
+        let rate = document.getElementById("rate").value.trim();
 
-        if (!item || !qty || !rate) return alert("Fill all fields!");
+        if (!item) return alert("Item name is required!");
 
-        list.push({ item, qty, rate, category, done: false });
+        if (qty && isNaN(qty)) return alert("Qty digit only!");
+        if (rate && isNaN(rate)) return alert("Rate digit only!");
+
+        qty = qty || "-";  
+        rate = rate || "-";
+
+        list.push({ item, qty, rate, done: false });
         save();
+        
+        document.getElementById("item").value = "";
+        document.getElementById("qty").value = "";
+        document.getElementById("rate").value = "";
     }
 
     function render() {
@@ -96,45 +141,50 @@
         let total = 0;
 
         list.forEach((data, i) => {
-            let amount = data.qty * data.rate;
-            total += amount;
+            let amount = (!isNaN(data.qty) && !isNaN(data.rate)) ? (data.qty * data.rate) : "-";
+            if (amount !== "-") total += amount;
 
-            tbody.innerHTML += `
-                <tr>
-                    <td><input type="checkbox" ${data.done ? "checked" : ""} onchange="toggle(${i})"></td>
-                    <td>${data.item}</td>
-                    <td>${data.qty}</td>
-                    <td>${data.rate}</td>
-                    <td>${amount}</td>
-                    <td>${data.category}</td>
-                    <td><button onclick="edit(${i})">✏</button></td>
-                    <td><button onclick="del(${i})">❌</button></td>
-                </tr>`;
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                <td><input type="checkbox" ${data.done ? "checked" : ""} onchange="toggle(${i})"></td>
+                <td>${data.item}</td>
+                <td>${data.qty}</td>
+                <td>${data.rate}</td>
+                <td>${amount}</td>
+            `;
+            row.onclick = () => edit(i);
+            tbody.appendChild(row);
         });
         document.getElementById("totalAmount").innerText = total;
     }
 
     function toggle(i) { list[i].done = !list[i].done; save(); }
+
     function edit(i) {
-        let data = prompt("Edit item (name,qty,rate)", `${list[i].item},${list[i].qty},${list[i].rate}`);
+        const data = prompt("Edit: item,qty,rate", `${list[i].item},${list[i].qty},${list[i].rate}`);
         if (!data) return;
-        let [item, qty, rate] = data.split(",");
+        const [item, qty, rate] = data.split(",");
         list[i] = { ...list[i], item, qty, rate };
         save();
     }
-    function del(i) { list.splice(i, 1); save(); }
-    function clearAll() { list = []; save(); }
+
+    function clearAll() { if (confirm("Clear all?")) list = []; save(); }
 
     function exportCSV() {
-        let csv = "Item,Qty,Rate,Amount,Category\n";
-        list.forEach(a => csv += `${a.item},${a.qty},${a.rate},${a.qty * a.rate},${a.category}\n`);
+        let csv = "Item,Qty,Rate,Amount\n";
+        list.forEach(a => {
+            const amount = (!isNaN(a.qty) && !isNaN(a.rate)) ? (a.qty * a.rate) : "-";
+            csv += `${a.item},${a.qty},${a.rate},${amount}\n`;
+        });
         let link = document.createElement("a");
         link.href = "data:text/csv," + encodeURI(csv);
         link.download = "StarShopList.csv";
         link.click();
     }
 
-    function shareList() { alert("Use screenshot to share! (Future: WhatsApp share possible)"); }
+    function shareList() {
+        alert("Share via screenshot (Next version: WhatsApp share)");
+    }
 
     render();
 </script>
