@@ -1,355 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>StarShopList — Smart</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StarShopList</title>
+
 <style>
-  :root{
-    --bg:#d5f8d4;
-    --header:#007bff;
-    --card:#ffffff;
-    --accent:#28a745;
-    --warn:#ff9800;
-    --danger:#f44336;
-    --muted:#666;
-  }
-  body{margin:0;background:var(--bg);font-family:Inter, Arial, sans-serif;padding:10px}
-  .header{
-    background:var(--header);color:#fff;padding:12px 16px;border-radius:8px;
-    text-align:center;font-weight:700;font-size:18px;box-shadow:0 3px 8px rgba(0,0,0,0.12)
+  body { font-family: Arial, sans-serif; background: #d5f8d4; margin: 0; padding: 10px; }
+
+  .header {
+    text-align:center; background: #007bff; color:white;
+    padding:12px; font-size:22px; font-weight:bold;
+    border-bottom-left-radius:10px; border-bottom-right-radius:10px;
   }
 
-  .input-section{display:flex;flex-direction:column;gap:10px;margin:14px auto 0;max-width:980px}
-  .item-box{width:100%;padding:12px;border-radius:10px;border:1px solid #bfc9d9;font-size:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,0.6)}
-  .controls-row{display:flex;gap:10px;align-items:center}
-  .round-box{flex:0 0 28%;min-width:84px;padding:10px;border-radius:18px;border:1px solid #bfc9d9;text-align:center;font-size:15px}
-  .add-btn{width:64px;height:64px;border-radius:50%;background:var(--header);color:#fff;border:none;font-size:26px;box-shadow:0 6px 18px rgba(0,0,0,0.12);cursor:pointer}
-  .table-wrap{overflow:auto;margin-top:12px;border-radius:10px;box-shadow:0 6px 18px rgba(16,24,40,0.06);max-width:980px;background:var(--card)}
-  table{width:100%;border-collapse:collapse;font-size:15px}
-  th,td{padding:10px;border-bottom:1px solid #f0f2f6;text-align:left}
-  thead th{background:#222;color:#fff;position:sticky;top:0;padding:12px}
-  td.center{width:60px;text-align:center}
-  td.amount{width:110px;text-align:right;padding-right:16px}
-  .delete-btn{background:transparent;border:none;color:var(--danger);font-size:18px;cursor:pointer;padding:6px;border-radius:6px}
-  .bottom-row{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:12px;max-width:980px}
-  .summary{font-weight:700}
-  .btn-row{display:flex;gap:8px}
-  .btn{padding:10px 14px;border-radius:9px;border:0;color:#fff;font-weight:700;cursor:pointer}
-  .export{background:var(--accent)}
-  .share{background:var(--warn);color:#000}
-  .clear{background:var(--danger)}
-  /* mobile */
-  @media (max-width:640px){
-    .controls-row{flex-direction:row;gap:8px}
-    .round-box{flex-basis:30%}
-    .add-btn{width:56px;height:56px}
-    thead th:nth-child(6), td:nth-child(6) {display:none} /* hide delete label on small screens if needed */
+  .input-section { 
+    display:flex; flex-direction:column; align-items:center; margin-top:20px;
   }
-  /* small helper for contenteditable focus */
-  td[contenteditable="true"]:focus{outline:2px solid rgba(0,123,255,0.25);background:#fff}
+
+  .item-box {
+    width:85%; padding:14px; border-radius:8px; border:1px solid #aaa;
+    font-size:17px; margin-bottom:10px;
+  }
+
+  .round-box {
+    width:40%; padding:10px; text-align:center;
+    border-radius:15px; border:1px solid #aaa; font-size:16px;
+  }
+
+  .add-btn {
+    width:60px; height:60px; border-radius:50%; font-size:22px;
+    background:#007bff; color:white; border:none; cursor:pointer;
+  }
+
+  table { width:100%; border-collapse:collapse; background:white; margin-top:10px; font-size:16px; }
+  th, td { border:1px solid #ddd; padding:8px; text-align:center; }
+  th { background:#333; color:white; }
+
+  .btn-row { text-align:center; margin-top:20px; }
+  .btn-row button { padding:10px 15px; border:none; border-radius:8px; margin:5px; color:white; font-weight:bold; }
+  .export { background:#28a745; }
+  .share { background:#ff9800; }
+  .clear { background:#f44336; }
+
 </style>
 </head>
 <body>
 
-<div class="header">StarShopList — <span id="todayDate"></span></div>
+<div class="header">StarShopList – <span id="todayDate"></span></div>
 
-<div class="input-section" role="region" aria-label="Add item">
-  <input id="itemInput" class="item-box" type="text" inputmode="text" placeholder="Enter item name (required)" autofocus>
+<!-- INPUT -->
+<div class="input-section">
+  <input type="text" id="item" class="item-box" placeholder="Enter Item Name">
 
-  <div class="controls-row">
-    <input id="qtyInput" class="round-box" type="text" inputmode="numeric" placeholder="Qty (optional)">
-    <input id="rateInput" class="round-box" type="text" inputmode="decimal" placeholder="Rate (optional)">
-    <button id="addBtn" class="add-btn" aria-label="Add item">＋</button>
+  <div style="display:flex; gap:10px;">
+    <input type="text" id="qty" class="round-box" placeholder="Qty (Optional)">
+    <input type="text" id="rate" class="round-box" placeholder="Rate (Optional)">
+    <button class="add-btn" onclick="addItem()">+</button>
   </div>
 </div>
 
-<div class="table-wrap" id="tableWrap" role="table">
-  <table id="listTable" aria-label="Shopping list">
-    <thead>
-      <tr>
-        <th class="center">✔</th>
-        <th>Item</th>
-        <th class="center">Qty</th>
-        <th class="center">Rate</th>
-        <th class="amount">Amount</th>
-        <th class="center">Delete</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</div>
+<!-- TABLE -->
+<table id="listTable">
+  <thead>
+    <tr>
+      <th>✔</th><th>Item</th><th>Qty</th><th>Rate</th><th>Amount</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
 
-<div class="bottom-row">
-  <div class="summary">Total: ₹<span id="totalAmount">0</span></div>
-  <div class="btn-row">
-    <button class="btn export" id="exportCsvBtn">Export CSV</button>
-    <button class="btn share" id="shareBtn">Share</button>
-    <button class="btn clear" id="clearBtn">Clear All</button>
-  </div>
+<h3 style="text-align:center;">Total: ₹<span id="totalAmount">0</span></h3>
+
+<!-- FOOTER BUTTONS -->
+<div class="btn-row">
+  <button class="export" onclick="exportCSV()">Export CSV</button>
+  <button class="share" onclick="shareList()">Share</button>
+  <button class="clear" onclick="clearAll()">Clear All</button>
 </div>
 
 <script>
-/* StarShopList — Smart inline edit + Enter behavior + delete button */
-const STORAGE_KEY = 'starshoplist_v1';
-let items = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  document.getElementById("todayDate").innerText = new Date().toLocaleDateString();
+  let list = JSON.parse(localStorage.getItem("shopList")) || [];
 
-const todayDateEl = document.getElementById('todayDate');
-const itemInput = document.getElementById('itemInput');
-const qtyInput = document.getElementById('qtyInput');
-const rateInput = document.getElementById('rateInput');
-const addBtn = document.getElementById('addBtn');
-const tbody = document.querySelector('#listTable tbody');
-const totalAmountEl = document.getElementById('totalAmount');
-const exportCsvBtn = document.getElementById('exportCsvBtn');
-const shareBtn = document.getElementById('shareBtn');
-const clearBtn = document.getElementById('clearBtn');
-
-todayDateEl.textContent = new Date().toLocaleDateString();
-
-// Utility
-const uid = ()=> Date.now().toString(36) + Math.random().toString(36).slice(2,7);
-const money = v => Number(v||0).toFixed(2);
-
-// Add item function (same as add button and Enter on inputs)
-function addItem(){
-  const name = itemInput.value.trim();
-  const qtyRaw = qtyInput.value.trim();
-  const rateRaw = rateInput.value.trim();
-
-  if(!name){ itemInput.focus(); return alert('Item name is required'); }
-  if(qtyRaw && isNaN(qtyRaw)) { qtyInput.focus(); return alert('Qty must be a number'); }
-  if(rateRaw && isNaN(rateRaw)) { rateInput.focus(); return alert('Rate must be a number'); }
-
-  const item = {
-    id: uid(),
-    name,
-    qty: qtyRaw === '' ? '' : String(qtyRaw),
-    rate: rateRaw === '' ? '' : String(rateRaw),
-    done: false,
-    createdAt: Date.now()
-  };
-  items.unshift(item);
-  saveAndRender();
-  // clear inputs and focus item
-  itemInput.value=''; qtyInput.value=''; rateInput.value='';
-  itemInput.focus();
-}
-
-// Attach add handlers
-addBtn.addEventListener('click', addItem);
-// Enter on inputs should add too
-[itemInput, qtyInput, rateInput].forEach(inp=>{
-  inp.addEventListener('keydown', (e)=>{
-    if(e.key === 'Enter') { e.preventDefault(); addItem(); }
+  // 🧠 ENTER KEY = ADD ITEM
+  document.getElementById("item").addEventListener("keydown", e => {
+    if (e.key === "Enter") addItem();
   });
-});
+  document.getElementById("qty").addEventListener("keydown", e => {
+    if (e.key === "Enter") addItem();
+  });
+  document.getElementById("rate").addEventListener("keydown", e => {
+    if (e.key === "Enter") addItem();
+  });
 
-// Save
-function save(){
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-}
+  function save() {
+    localStorage.setItem("shopList", JSON.stringify(list));
+    render();
+  }
 
-function saveAndRender(){ save(); render(); }
+  function addItem() {
+    const item = document.getElementById("item").value.trim();
+    let qty = document.getElementById("qty").value.trim();
+    let rate = document.getElementById("rate").value.trim();
 
-// Render table
-function render(){
-  tbody.innerHTML = '';
-  let total=0;
-  items.forEach((it, idx) => {
-    const tr = document.createElement('tr');
-    // checkbox cell
-    const tdChk = document.createElement('td'); tdChk.className='center';
-    const chk = document.createElement('input'); chk.type='checkbox'; chk.checked = !!it.done;
-    chk.addEventListener('change', ()=> { items[idx].done = chk.checked; saveAndRender(); });
-    tdChk.appendChild(chk);
+    if (!item) return alert("Item required!");
+    if (qty && isNaN(qty)) return alert("Qty must be number!");
+    if (rate && isNaN(rate)) return alert("Rate must be number!");
 
-    // item cell (contenteditable)
-    const tdItem = document.createElement('td');
-    tdItem.textContent = it.name;
-    tdItem.contentEditable = true;
-    tdItem.spellcheck = false;
-    tdItem.dataset.row = idx; tdItem.dataset.field = 'name';
-    tdItem.addEventListener('blur', onEditableBlur);
+    qty = qty || "-";  
+    rate = rate || "-";
 
-    // qty
-    const tdQty = document.createElement('td'); tdQty.className='center';
-    tdQty.textContent = it.qty === '' ? '' : it.qty;
-    tdQty.contentEditable = true; tdQty.spellcheck = false;
-    tdQty.dataset.row = idx; tdQty.dataset.field = 'qty';
-    tdQty.addEventListener('blur', onEditableBlur);
+    list.push({ item, qty, rate, done: false });
+    document.getElementById("item").value = "";
+    document.getElementById("qty").value = "";
+    document.getElementById("rate").value = "";
+    save();
+  }
 
-    // rate
-    const tdRate = document.createElement('td'); tdRate.className='center';
-    tdRate.textContent = it.rate === '' ? '' : it.rate;
-    tdRate.contentEditable = true; tdRate.spellcheck = false;
-    tdRate.dataset.row = idx; tdRate.dataset.field = 'rate';
-    tdRate.addEventListener('blur', onEditableBlur);
+  function render() {
+    let total = 0;
+    const tbody = document.querySelector("#listTable tbody");
+    tbody.innerHTML = "";
 
-    // amount
-    const tdAmt = document.createElement('td'); tdAmt.className='amount';
-    const amt = (!isNaN(it.qty) && it.qty !== '' && !isNaN(it.rate) && it.rate !== '') ? (Number(it.qty) * Number(it.rate)) : 0;
-    tdAmt.textContent = amt ? '₹ ' + money(amt) : '-';
-    if(amt) total += amt;
+    list.forEach((data, i) => {
+      let amount = (!isNaN(data.qty) && !isNaN(data.rate)) ? data.qty * data.rate : "-";
+      if (amount !== "-") total += amount;
 
-    // delete
-    const tdDel = document.createElement('td'); tdDel.className='center';
-    const delBtn = document.createElement('button');
-    delBtn.className = 'delete-btn';
-    delBtn.title = 'Delete item';
-    delBtn.innerHTML = '🗑';
-    delBtn.addEventListener('click', (ev)=>{
-      ev.stopPropagation();
-      if(!confirm('Delete this item?')) return;
-      items.splice(idx,1);
-      saveAndRender();
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td><input type="checkbox" ${data.done ? "checked" : ""} onchange="toggle(${i})"></td>
+        <td contenteditable="true" onblur="updateItem(${i}, this.innerText, 'item')">${data.item}</td>
+        <td contenteditable="true" onblur="updateItem(${i}, this.innerText, 'qty')">${data.qty}</td>
+        <td contenteditable="true" onblur="updateItem(${i}, this.innerText, 'rate')">${data.rate}</td>
+        <td>${amount}</td>
+      `;
+      tbody.appendChild(row);
     });
-    tdDel.appendChild(delBtn);
-
-    // append
-    tr.appendChild(tdChk);
-    tr.appendChild(tdItem);
-    tr.appendChild(tdQty);
-    tr.appendChild(tdRate);
-    tr.appendChild(tdAmt);
-    tr.appendChild(tdDel);
-
-    // clicking row (not on delete or checkbox) should focus first editable cell in that row
-    tr.addEventListener('click', (ev)=>{
-      if(ev.target.closest('button') || ev.target.tagName === 'INPUT') return;
-      // focus item cell (tdItem)
-      focusContentEditable(tdItem);
-    });
-
-    // Prevent Enter inserting newline: attach keydown to editable tds
-    [tdItem, tdQty, tdRate].forEach(td=>{
-      td.addEventListener('keydown', (e)=> {
-        if(e.key === 'Enter') {
-          e.preventDefault(); // prevent newline
-          // save current cell, then move focus to next editable cell
-          const row = Number(td.dataset.row);
-          const field = td.dataset.field;
-          const value = td.innerText.trim();
-          // validation for qty/rate
-          if((field === 'qty' || field === 'rate') && value !== '' && isNaN(value)){
-            alert('Only numbers allowed for Qty and Rate');
-            focusContentEditable(td);
-            return;
-          }
-          // save
-          items[row][ field === 'name' ? 'name' : field ] = value;
-          save();
-          // move focus to next editable cell in document order
-          moveFocusToNextEditable(td);
-        }
-      });
-      // optional: on input we can save live (debounced) — but here we save on blur/Enter
-    });
-
-    tbody.appendChild(tr);
-  });
-  totalAmountEl.textContent = money(total);
-}
-
-// When editable cell loses focus, update data
-function onEditableBlur(e){
-  const td = e.target;
-  const row = Number(td.dataset.row);
-  const field = td.dataset.field;
-  const value = td.innerText.trim();
-  if((field === 'qty' || field === 'rate') && value !== '' && isNaN(value)){
-    // invalid -> reset to previous value
-    alert('Only numbers allowed for Qty and Rate');
-    render(); // reset view
-    return;
+    document.getElementById("totalAmount").innerText = total;
   }
-  if(field === 'name') items[row].name = value || items[row].name;
-  else items[row][field] = value;
-  saveAndRender();
-}
 
-// Focus helper
-function focusContentEditable(td){
-  td.focus();
-  // move caret to end
-  document.execCommand && document.execCommand('selectAll', false, null);
-  const sel = window.getSelection();
-  if(sel && sel.rangeCount){
-    sel.collapseToEnd();
-  }
-}
-
-// Move focus to next contenteditable cell (row-major)
-function moveFocusToNextEditable(currentTd){
-  const editables = Array.from(tbody.querySelectorAll('td[contenteditable="true"]'));
-  const idx = editables.indexOf(currentTd);
-  if(idx === -1) return;
-  const next = editables[idx+1];
-  if(next){
-    focusContentEditable(next);
-  } else {
-    // go back to item input to add new
-    itemInput.focus();
-  }
-}
-
-// Export CSV
-exportCsvBtn.addEventListener('click', ()=>{
-  if(items.length === 0) return alert('No items to export');
-  let csv = 'Item,Qty,Rate,Amount,AddedAt\n';
-  items.forEach(it=>{
-    const amt = (!isNaN(it.qty) && it.qty !== '' && !isNaN(it.rate) && it.rate !== '') ? (Number(it.qty)*Number(it.rate)).toFixed(2) : '';
-    csv += `"${(it.name||'').replace(/"/g,'""')}",${it.qty},${it.rate},${amt},"${new Date(it.createdAt).toLocaleString()}"\n`;
-  });
-  const blob = new Blob([csv], {type:'text/csv'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'StarShopList.csv'; document.body.appendChild(a); a.click(); a.remove();
-  URL.revokeObjectURL(url);
-});
-
-// Share (uses Web Share API if available)
-shareBtn.addEventListener('click', async ()=>{
-  const lines = [`StarShopList — ${new Date().toLocaleDateString()}`];
-  items.forEach(i => {
-    const amt = (!isNaN(i.qty) && i.qty !== '' && !isNaN(i.rate) && i.rate !== '') ? `₹${(Number(i.qty)*Number(i.rate)).toFixed(2)}` : '';
-    lines.push(`${i.name} ${i.qty? '('+i.qty+')':''} ${i.rate? 'x₹'+i.rate:''} ${amt}`);
-  });
-  const text = lines.join('\n');
-  if(navigator.share){
-    try { await navigator.share({ title:'StarShopList', text }); return; } catch(e){}
-  }
-  // fallback copy to clipboard
-  try{
-    await navigator.clipboard.writeText(text);
-    alert('List copied to clipboard. Paste it in your chat app.');
-  }catch(e){
-    const w = window.open('', '_blank'); w.document.write('<pre>'+text.replace(/</g,'&lt;')+'</pre>'); w.document.close();
-  }
-});
-
-// Clear all
-clearBtn.addEventListener('click', ()=>{
-  if(!confirm('Clear entire list?')) return;
-  items = [];
-  saveAndRender();
-});
-
-// initialization
-function init(){
-  // restore items (already loaded)
-  render();
-  // small UX: pressing Enter on itemInput = add; done earlier
-  // For accessibility, pressing Escape while editing will blur
-  tbody.addEventListener('keydown', (e)=>{
-    if(e.key === 'Escape'){
-      const editable = document.activeElement;
-      if(editable && editable.getAttribute && editable.getAttribute('contenteditable') === 'true'){
-        editable.blur();
-      }
+  function updateItem(i, value, field) {
+    if (field !== "item" && isNaN(value) && value !== "-") {
+      alert("Only numbers allowed!");
+      render();
+      return;
     }
-  });
-}
-init();
+    list[i][field] = value;
+    save();
+  }
+
+  function toggle(i) { list[i].done = !list[i].done; save(); }
+
+  function clearAll() { if (confirm("Clear?")) list = []; save(); }
+
+  function exportCSV() {
+    let csv = "Item,Qty,Rate,Amount\n";
+    list.forEach(a => {
+      const amount = (!isNaN(a.qty) && !isNaN(a.rate)) ? a.qty * a.rate : "-";
+      csv += `${a.item},${a.qty},${a.rate},${amount}\n`;
+    });
+    let link = document.createElement("a");
+    link.href = "data:text/csv," + encodeURI(csv);
+    link.download = "StarShopList.csv";
+    link.click();
+  }
+
+  function shareList() {
+    navigator.share
+      ? navigator.share({ text: "My Shopping List\n" + list.map(a => a.item).join("\n") })
+      : alert("Use screenshot to share!");
+  }
+
+  render();
 </script>
+
 </body>
 </html>
