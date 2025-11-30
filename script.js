@@ -2,7 +2,7 @@
 const imagesData = [
     {
         // GitHub URL को यहां अपडेट करें
-        url: "https://via.placeholder.com/600/007bff/FFFFFF?text=Mountain+Sunrise", 
+        url: "https://raw.githubusercontent.com/mustafa2smi-ui/FaithDeepHeart/main/Dua.jpg", 
         alt: "पहाड़ों में सूर्योदय का विहंगम दृश्य",
         caption: "सुबह का सुंदर दृश्य, ताज़ी हवा और शांत माहौल।",
     },
