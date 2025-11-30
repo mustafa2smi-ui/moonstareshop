@@ -1,7 +1,8 @@
 // ----------------- इमेज डेटा (अपनी GitHub लिंक्स यहाँ अपडेट करें) -----------------
 const imagesData = [
     {
-        url: "https://via.placeholder.com/600/007bff/FFFFFF?text=Mountain+Sunrise",
+        // GitHub URL को यहां अपडेट करें
+        url: "https://via.placeholder.com/600/007bff/FFFFFF?text=Mountain+Sunrise", 
         alt: "पहाड़ों में सूर्योदय का विहंगम दृश्य",
         caption: "सुबह का सुंदर दृश्य, ताज़ी हवा और शांत माहौल।",
     },
@@ -20,6 +21,7 @@ const imagesData = [
         alt: "विशाल रेगिस्तानी रेत के टीले",
         caption: "सूर्य के ढलने पर रेगिस्तान का सुनहरा नज़ारा।",
     },
+    // आप और इमेजेस यहाँ जोड़ सकते हैं
 ];
 
 // ----------------- DOM एलिमेंट्स -----------------
@@ -49,11 +51,13 @@ function loadGalleryImages() {
         img.src = data.url; 
         img.alt = data.alt;
         img.className = 'gallery-item';
-        img.setAttribute('data-index', index);
+        // HTML में इंडेक्स सेट करें
+        img.setAttribute('data-index', index); 
         
         galleryContainer.appendChild(img);
     });
-    // इवेंट लिसनर्स को डायनेमिकली लोड हुई इमेजेस पर सेट करें
+    
+    // **सुधार:** इमेजेस लोड होने के बाद इवेंट लिसनर्स सेट करें
     setupGalleryClickListeners(); 
 }
 
@@ -69,35 +73,33 @@ function updateLightboxImage(index) {
         lightboxImage.alt = currentImage.alt;
         lightboxCaption.textContent = currentImage.caption;
         
-        // SEO: ब्राउज़र टैब का टाइटल अपडेट करें (Lightbox के ओपन होने पर)
         pageTitle.textContent = currentImage.alt + " | Gallery Pro";
     }
 }
 
 function closeLightbox() {
     lightbox.style.display = 'none';
-    pageTitle.textContent = "मेरी GitHub इमेज गैलरी"; // टाइटल को वापस सेट करें
+    pageTitle.textContent = "मेरी GitHub इमेज गैलरी"; 
 }
 
 
 // ----------------- इवेंट लिसनर्स सेटअप -----------------
 
-/**
- * हैमबर्गर मेनू को टॉगल (Toggle) करता है
- */
+// हैमबर्गर मेनू को टॉगल (Toggle) करता है
 menuToggle.addEventListener('click', function() {
     mainNav.classList.toggle('active');
 });
 
 
 /**
- * गैलरी इमेजेस पर क्लिक इवेंट सेट करता है
+ * **सुधारित फ़ंक्शन:** गैलरी इमेजेस पर क्लिक इवेंट सेट करता है
  */
 function setupGalleryClickListeners() {
     const galleryItems = document.querySelectorAll('.gallery-item');
     galleryItems.forEach(item => {
         item.addEventListener('click', function() {
-            const index = parseInt(this.getAttribute('data-index'));
+            // HTML में सेट किए गए 'data-index' को प्राप्त करें
+            const index = parseInt(this.getAttribute('data-index')); 
             lightbox.style.display = 'block'; 
             updateLightboxImage(index); 
         });
@@ -113,11 +115,13 @@ lightbox.addEventListener('click', function(e) {
     }
 });
 
+// पिछली इमेज पर जाएं (मॉड्यूलो ऑपरेटर का उपयोग करके लूपिंग सुनिश्चित करें)
 prevBtn.addEventListener('click', function() {
     let newIndex = (currentIndex - 1 + imagesData.length) % imagesData.length;
     updateLightboxImage(newIndex);
 });
 
+// अगली इमेज पर जाएं
 nextBtn.addEventListener('click', function() {
     let newIndex = (currentIndex + 1) % imagesData.length;
     updateLightboxImage(newIndex);
