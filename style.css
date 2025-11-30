@@ -104,7 +104,7 @@ body {
 
 /* ------------------- लाइटबॉक्स स्टाइल (पिछले कोड से) ------------------- */
 .lightbox {
-    /* ... (वही रहेगा) ... */
+    /* ... (वही रहेगा) ... *
     z-index: 1000;
 }
 
@@ -113,6 +113,34 @@ body {
     text-align: center;
     padding: 20px;
     font-size: 1.2em;
+}
+*/
+/* ------------------- लाइटबॉक्स स्टाइल (यही कोड समस्या को ठीक करता है) ------------------- */
+.lightbox {
+    /* ✨ यह प्रॉपर्टी लाइटबॉक्स को पूरे Viewport पर स्थिर करती है ✨ */
+    position: fixed; 
+    
+    display: none; /* JS इसे 'block' करके दिखाता है */
+    z-index: 1000; /* बाकी सब के ऊपर दिखने के लिए */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    /* इमेज को बीच में लाने के लिए flexbox का उपयोग करें */
+    display: flex; /* यह पहले 'none' होता है, लेकिन जब JS इसे 'block' करता है, तो flexbox काम करता है */
+    justify-content: center; /* हॉरिजॉन्टली बीच में */
+    align-items: center; /* वर्टिकली बीच में */
+    overflow: hidden; /* अगर इमेज बड़ी हो तो स्क्रॉल न हो */
+    background-color: rgba(0, 0, 0, 0.9); /* काला पारदर्शी बैकग्राउंड */
+}
+
+/* लाइटबॉक्स के अंदर की इमेज को भी बीच में आना चाहिए */
+.lightbox-content {
+    /* 'margin: auto' यहाँ ज़रूरी नहीं है क्योंकि parent flex है */
+    display: block;
+    max-width: 90%;
+    max-height: 90vh; /* Viewport Height */
+    object-fit: contain; 
 }
 
 /* ------------------- 2. फ़ूटर स्टाइल ------------------- */
