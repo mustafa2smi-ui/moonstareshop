@@ -22,7 +22,7 @@ const imagesData = [
     },
 ];
 
-// ----------------- DOM एलिमेंट्स (सभी को getElementById से सेलेक्ट करें) -----------------
+// ----------------- DOM एलिमेंट्स -----------------
 const galleryContainer = document.getElementById('gallery-container');
 const lightbox = document.getElementById('lightbox');
 const lightboxImage = document.getElementById('lightbox-image');
@@ -41,7 +41,7 @@ let currentIndex = 0;
 // ----------------- मुख्य फ़ंक्शंस -----------------
 
 /**
- * गैलरी में इमेजेस को डायनेमिकली लोड करता है
+ * गैलरी में इमेजेस को डायनेमिकली लोड करता है और क्लिक इवेंट सेट करता है
  */
 function loadGalleryImages() {
     imagesData.forEach((data, index) => {
@@ -51,12 +51,11 @@ function loadGalleryImages() {
         img.className = 'gallery-item';
         img.setAttribute('data-index', index); 
         
-        // **सुधार:** यहाँ इवेंट लिसनर को जोड़ें, जब इमेज बनती है।
+        // **यहां क्लिक इवेंट सेट किया गया है**
         img.addEventListener('click', function() {
             const index = parseInt(this.getAttribute('data-index')); 
-            lightbox.style.display = 'block'; 
+            lightbox.style.display = 'flex'; // 'flex' का उपयोग बीच में लाने के लिए
             updateLightboxImage(index); 
-            // मोबाइल पर मेनू खुला हो तो बंद कर दें
             mainNav.classList.remove('active'); 
         });
         
@@ -66,7 +65,6 @@ function loadGalleryImages() {
 
 /**
  * लाइटबॉक्स में इमेज और कैप्शन को अपडेट करता है
- * यह फ़ंक्शन अब imagesData ऐरे पर पूरी तरह निर्भर है।
  */
 function updateLightboxImage(index) {
     if (index >= 0 && index < imagesData.length) {
@@ -94,33 +92,40 @@ menuToggle.addEventListener('click', function() {
     mainNav.classList.toggle('active');
 });
 
-
 // लाइटबॉक्स नेविगेशन और क्लोजिंग इवेंट्स
 closeBtn.addEventListener('click', closeLightbox);
 
 lightbox.addEventListener('click', function(e) {
+    // केवल बैकग्राउंड पर क्लिक करने पर बंद होगा
     if (e.target === this) { 
         closeLightbox();
     }
 });
 
-// पिछली इमेज पर जाएं (स्लाइडिंग)
+// पिछली इमेज पर जाएं (स्लाइडिंग लॉजिक - आपके पुराने कोड जैसा)
 prevBtn.addEventListener('click', function() {
-    // मॉड्युलस ऑपरेटर का उपयोग करके लूपिंग (Looping) सुनिश्चित करें
-    let newIndex = (currentIndex - 1 + imagesData.length) % imagesData.length;
+    let newIndex = currentIndex - 1;
+    // अगर पहली इमेज पर हैं, तो अंतिम इमेज पर जाएं (लूप)
+    if (newIndex < 0) {
+        newIndex = imagesData.length - 1;
+    }
     updateLightboxImage(newIndex);
 });
 
-// अगली इमेज पर जाएं (स्लाइडिंग)
+// अगली इमेज पर जाएं (स्लाइडिंग लॉजिक - आपके पुराने कोड जैसा)
 nextBtn.addEventListener('click', function() {
-    let newIndex = (currentIndex + 1) % imagesData.length;
+    let newIndex = currentIndex + 1;
+    // अगर अंतिम इमेज पर हैं, तो पहली इमेज पर जाएं (लूप)
+    if (newIndex >= imagesData.length) {
+        newIndex = 0;
+    }
     updateLightboxImage(newIndex);
 });
 
 
 // कीबोर्ड नेविगेशन
 document.addEventListener('keydown', function(e) {
-    if (lightbox.style.display === 'block') {
+    if (lightbox.style.display === 'flex') { // 'flex' चेक करें
         if (e.key === 'Escape') {
             closeLightbox();
         } else if (e.key === 'ArrowLeft') {
