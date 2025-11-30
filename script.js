@@ -1,7 +1,6 @@
 // ----------------- इमेज डेटा (अपनी GitHub लिंक्स यहाँ अपडेट करें) -----------------
 const imagesData = [
     {
-        // GitHub URL को यहां अपडेट करें
         url: "https://raw.githubusercontent.com/mustafa2smi-ui/FaithDeepHeart/main/Dua.jpg", 
         alt: "पहाड़ों में सूर्योदय का विहंगम दृश्य",
         caption: "सुबह का सुंदर दृश्य, ताज़ी हवा और शांत माहौल।",
@@ -21,10 +20,9 @@ const imagesData = [
         alt: "विशाल रेगिस्तानी रेत के टीले",
         caption: "सूर्य के ढलने पर रेगिस्तान का सुनहरा नज़ारा।",
     },
-    // आप और इमेजेस यहाँ जोड़ सकते हैं
 ];
 
-// ----------------- DOM एलिमेंट्स -----------------
+// ----------------- DOM एलिमेंट्स (सभी को getElementById से सेलेक्ट करें) -----------------
 const galleryContainer = document.getElementById('gallery-container');
 const lightbox = document.getElementById('lightbox');
 const lightboxImage = document.getElementById('lightbox-image');
@@ -51,18 +49,24 @@ function loadGalleryImages() {
         img.src = data.url; 
         img.alt = data.alt;
         img.className = 'gallery-item';
-        // HTML में इंडेक्स सेट करें
         img.setAttribute('data-index', index); 
+        
+        // **सुधार:** यहाँ इवेंट लिसनर को जोड़ें, जब इमेज बनती है।
+        img.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index')); 
+            lightbox.style.display = 'block'; 
+            updateLightboxImage(index); 
+            // मोबाइल पर मेनू खुला हो तो बंद कर दें
+            mainNav.classList.remove('active'); 
+        });
         
         galleryContainer.appendChild(img);
     });
-    
-    // **सुधार:** इमेजेस लोड होने के बाद इवेंट लिसनर्स सेट करें
-    setupGalleryClickListeners(); 
 }
 
 /**
  * लाइटबॉक्स में इमेज और कैप्शन को अपडेट करता है
+ * यह फ़ंक्शन अब imagesData ऐरे पर पूरी तरह निर्भर है।
  */
 function updateLightboxImage(index) {
     if (index >= 0 && index < imagesData.length) {
@@ -91,21 +95,6 @@ menuToggle.addEventListener('click', function() {
 });
 
 
-/**
- * **सुधारित फ़ंक्शन:** गैलरी इमेजेस पर क्लिक इवेंट सेट करता है
- */
-function setupGalleryClickListeners() {
-    const galleryItems = document.querySelectorAll('.gallery-item');
-    galleryItems.forEach(item => {
-        item.addEventListener('click', function() {
-            // HTML में सेट किए गए 'data-index' को प्राप्त करें
-            const index = parseInt(this.getAttribute('data-index')); 
-            lightbox.style.display = 'block'; 
-            updateLightboxImage(index); 
-        });
-    });
-}
-
 // लाइटबॉक्स नेविगेशन और क्लोजिंग इवेंट्स
 closeBtn.addEventListener('click', closeLightbox);
 
@@ -115,13 +104,14 @@ lightbox.addEventListener('click', function(e) {
     }
 });
 
-// पिछली इमेज पर जाएं (मॉड्यूलो ऑपरेटर का उपयोग करके लूपिंग सुनिश्चित करें)
+// पिछली इमेज पर जाएं (स्लाइडिंग)
 prevBtn.addEventListener('click', function() {
+    // मॉड्युलस ऑपरेटर का उपयोग करके लूपिंग (Looping) सुनिश्चित करें
     let newIndex = (currentIndex - 1 + imagesData.length) % imagesData.length;
     updateLightboxImage(newIndex);
 });
 
-// अगली इमेज पर जाएं
+// अगली इमेज पर जाएं (स्लाइडिंग)
 nextBtn.addEventListener('click', function() {
     let newIndex = (currentIndex + 1) % imagesData.length;
     updateLightboxImage(newIndex);
