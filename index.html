@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitHub Image Gallery</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>मेरी GitHub इमेज गैलरी</h1>
+        <p>किसी भी इमेज पर क्लिक करके बड़ा साइज़ देखें और स्लाइड करें!</p>
+    </header>
+
+    <div class="gallery-container">
+        <img 
+            src="[आपकी पहली इमेज का GitHub URL]" 
+            alt="Image 1" 
+            class="gallery-item" 
+            data-large="[आपकी पहली इमेज का GitHub URL]" 
+            data-index="0"
+        >
+        
+        <img 
+            src="[आपकी दूसरी इमेज का GitHub URL]" 
+            alt="Image 2" 
+            class="gallery-item" 
+            data-large="[आपकी दूसरी इमेज का GitHub URL]" 
+            data-index="1"
+        >
+
+        <img 
+            src="[आपकी तीसरी इमेज का GitHub URL]" 
+            alt="Image 3" 
+            class="gallery-item" 
+            data-large="[आपकी तीसरी इमेज का GitHub URL]" 
+            data-index="2"
+        >
+        
+        </div>
+
+    <div id="lightbox" class="lightbox">
+        <span class="close-btn">&times;</span>
+        <img id="lightbox-image" class="lightbox-content" src="" alt="">
+        
+        <a class="prev-btn">&#10094;</a> 
+        <a class="next-btn">&#10095;</a>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>
