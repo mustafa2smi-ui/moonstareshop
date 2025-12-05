@@ -3,67 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title">मेरी GitHub इमेज गैलरी</title>
-    
-    <meta name="description" content="पहाड़ों, मंदिरों और शहर के नज़ारों की शानदार इमेज गैलरी।">
-    <meta name="keywords" content="image gallery, travel, photography, views, tour">
-    
-    <meta property="og:title" content="मेरी शानदार ऑनलाइन गैलरी">
-    <meta property="og:description" content="पहाड़ों, मंदिरों और शहर के नज़ारों की शानदार इमेज गैलरी।">
-    <meta property="og:image" content="[अपनी कोई अच्छी इमेज URL यहाँ डालें]">
-    <meta property="og:url" content="[अपनी वेबसाइट का URL यहाँ डालें]">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>GitHub Image Gallery</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header class="main-header">
-        <a href="#" class="logo">📷 Gallery Pro</a>
-        <button class="menu-toggle" aria-label="Toggle navigation">
-            <span class="bar"></span>
-            <span class="bar"></span>
-            <span class="bar"></span>
-        </button>
-        <nav class="main-nav">
-            <a href="#">होम</a>
-            <a href="#gallery-container">गैलरी</a>
-            <a href="#">हमारे बारे में</a>
-            <a href="#">संपर्क करें</a>
-        </nav>
+    <header>
+        <h1>मेरी GitHub इमेज गैलरी</h1>
+        <p>किसी भी इमेज पर क्लिक करके बड़ा साइज़ देखें और स्लाइड करें!</p>
     </header>
 
-    <div class="content-wrapper">
-        <h1 class="page-heading">हमारी बेहतरीन इमेज गैलरी</h1>
-        <p class="intro-text">किसी भी इमेज पर क्लिक करके बड़ा साइज़ देखें और स्लाइड करें!</p>
+    <div class="gallery-container">
+        <img 
+            src="https://raw.githubusercontent.com/mustafa2smi-ui/FaithDeepHeart/main/Dua.jpg" 
+            alt="Image 1" 
+            class="gallery-item" 
+            data-large="[आपकी पहली इमेज का GitHub URL]" 
+            data-index="0"
+        >
+        
+        <img 
+            src="[आपकी दूसरी इमेज का GitHub URL]" 
+            alt="Image 2" 
+            class="gallery-item" 
+            data-large="[आपकी दूसरी इमेज का GitHub URL]" 
+            data-index="1"
+        >
 
-        <div id="gallery-container" class="gallery-container">
-            </div>
-
-        <section class="info-section">
-            <h2>हमारे कलेक्शन के बारे में</h2>
-            <p>यह गैलरी दुनिया भर के कुछ सबसे खूबसूरत नज़ारों का संग्रह है। हमारे फोटोग्राफरों ने प्रकृति की सुंदरता और मानव निर्मित चमत्कारों को कैद करने के लिए बहुत मेहनत की है। पहाड़ों पर सुबह का नज़ारा, प्राचीन मंदिरों की भव्यता, और शहर की रात की चहल-पहल, हर फोटो एक कहानी कहती है। हम उम्मीद करते हैं कि आपको यह कलेक्शन पसंद आएगा।</p>
-            <p>हमारी वेबसाइट पर **गोपनीयता नीति** और **नियम और शर्तें** जैसी सभी कानूनी आवश्यकताएँ पूरी की गई हैं, जो Google AdSense अप्रूवल के लिए आवश्यक हैं।</p>
-        </section>
-    </div>
+        <img 
+            src="[आपकी तीसरी इमेज का GitHub URL]" 
+            alt="Image 3" 
+            class="gallery-item" 
+            data-large="[आपकी तीसरी इमेज का GitHub URL]" 
+            data-index="2"
+        >
+        
+        </div>
 
     <div id="lightbox" class="lightbox">
         <span class="close-btn">&times;</span>
         <img id="lightbox-image" class="lightbox-content" src="" alt="">
-        <div id="lightbox-caption"></div>
+        
         <a class="prev-btn">&#10094;</a> 
         <a class="next-btn">&#10095;</a>
     </div>
 
-    <footer>
-        <div class="footer-links">
-            <a href="#">गोपनीयता नीति (Privacy Policy)</a> | 
-            <a href="#">नियम और शर्तें (Terms)</a> | 
-            <a href="#">FAQ</a>
-        </div>
-        <p>&copy; 2025 Gallery Pro. सभी अधिकार सुरक्षित।</p>
-    </footer>
-
     <script src="script.js"></script>
+
 </body>
 </html>
