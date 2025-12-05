@@ -1,140 +1,80 @@
-// ----------------- इमेज डेटा (अपनी GitHub लिंक्स यहाँ अपडेट करें) -----------------
-const imagesData = [
-    {
-        url: "https://raw.githubusercontent.com/mustafa2smi-ui/FaithDeepHeart/main/Dua.jpg", 
-        alt: "पहाड़ों में सूर्योदय का विहंगम दृश्य",
-        caption: "सुबह का सुंदर दृश्य, ताज़ी हवा और शांत माहौल।",
-    },
-    {
-        url: "https://via.placeholder.com/600/28a745/FFFFFF?text=Ancient+Temple",
-        alt: "प्राचीन भारतीय मंदिर वास्तुकला", 
-        caption: "हमारी ऐतिहासिक धरोहर को दर्शाने वाला एक शानदार मंदिर।",
-    },
-    {
-        url: "https://via.placeholder.com/600/dc3545/FFFFFF?text=City+Nightscape",
-        alt: "शहर का रात्रि दृश्य और रोशनी",
-        caption: "तेज़ रफ़्तार शहर का चमकदार नाइट लाइफ़।",
-    },
-    {
-        url: "https://via.placeholder.com/600/ffc107/333333?text=Desert+View",
-        alt: "विशाल रेगिस्तानी रेत के टीले",
-        caption: "सूर्य के ढलने पर रेगिस्तान का सुनहरा नज़ारा।",
-    },
-];
-
-// ----------------- DOM एलिमेंट्स -----------------
-const galleryContainer = document.getElementById('gallery-container');
+// ज़रूरी DOM एलिमेंट्स को सेलेक्ट करें
+const galleryItems = document.querySelectorAll('.gallery-item');
 const lightbox = document.getElementById('lightbox');
 const lightboxImage = document.getElementById('lightbox-image');
 const closeBtn = document.querySelector('.close-btn');
 const prevBtn = document.querySelector('.prev-btn');
 const nextBtn = document.querySelector('.next-btn');
-const lightboxCaption = document.getElementById('lightbox-caption');
 
-// नेविगेशन एलिमेंट्स
-const menuToggle = document.querySelector('.menu-toggle');
-const mainNav = document.querySelector('.main-nav');
-const pageTitle = document.getElementById('page-title');
+let currentIndex = 0; // वर्तमान में खुली हुई इमेज का इंडेक्स
+const images = Array.from(galleryItems); // सभी इमेजेस का ऐरे
 
-let currentIndex = 0; 
-
-// ----------------- मुख्य फ़ंक्शंस -----------------
-
-/**
- * गैलरी में इमेजेस को डायनेमिकली लोड करता है और क्लिक इवेंट सेट करता है
- */
-function loadGalleryImages() {
-    imagesData.forEach((data, index) => {
-        const img = document.createElement('img');
-        img.src = data.url; 
-        img.alt = data.alt;
-        img.className = 'gallery-item';
-        img.setAttribute('data-index', index); 
-        
-        // **यहां क्लिक इवेंट सेट किया गया है**
-        img.addEventListener('click', function() {
-            const index = parseInt(this.getAttribute('data-index')); 
-            lightbox.style.display = 'flex'; // 'flex' का उपयोग बीच में लाने के लिए
-            updateLightboxImage(index); 
-            mainNav.classList.remove('active'); 
-        });
-        
-        galleryContainer.appendChild(img);
-    });
+// लाइटबॉक्स को बंद करने का फ़ंक्शन
+function closeLightbox() {
+    lightbox.style.display = 'none';
 }
 
-/**
- * लाइटबॉक्स में इमेज और कैप्शन को अपडेट करता है
- */
+// लाइटबॉक्स में इमेज को अपडेट करने का फ़ंक्शन
 function updateLightboxImage(index) {
-    if (index >= 0 && index < imagesData.length) {
+    if (index >= 0 && index < images.length) {
         currentIndex = index;
-        const currentImage = imagesData[currentIndex];
-        
-        lightboxImage.src = currentImage.url; 
-        lightboxImage.alt = currentImage.alt;
-        lightboxCaption.textContent = currentImage.caption;
-        
-        pageTitle.textContent = currentImage.alt + " | Gallery Pro";
+        const largeImageUrl = images[currentIndex].getAttribute('data-large');
+        lightboxImage.src = largeImageUrl;
     }
 }
 
-function closeLightbox() {
-    lightbox.style.display = 'none';
-    pageTitle.textContent = "मेरी GitHub इमेज गैलरी"; 
-}
+// ----------------- इवेंट लिसनर्स -----------------
 
-
-// ----------------- इवेंट लिसनर्स सेटअप -----------------
-
-// हैमबर्गर मेनू को टॉगल (Toggle) करता है
-menuToggle.addEventListener('click', function() {
-    mainNav.classList.toggle('active');
+// 1. गैलरी आइटम पर क्लिक करें
+galleryItems.forEach(item => {
+    item.addEventListener('click', function() {
+        const index = parseInt(this.getAttribute('data-index'));
+        
+        lightbox.style.display = 'block'; // लाइटबॉक्स दिखाएं
+        updateLightboxImage(index); // बड़ी इमेज लोड करें
+    });
 });
 
-// लाइटबॉक्स नेविगेशन और क्लोजिंग इवेंट्स
+// 2. बंद करने के बटन पर क्लिक करें
 closeBtn.addEventListener('click', closeLightbox);
 
+// 3. लाइटबॉक्स के बाहर क्लिक करें (लाइटबॉक्स को बंद करने के लिए)
 lightbox.addEventListener('click', function(e) {
-    // केवल बैकग्राउंड पर क्लिक करने पर बंद होगा
+    // अगर क्लिक लाइटबॉक्स कंटेनर पर हुआ है, न कि इमेज या बटन पर
     if (e.target === this) { 
         closeLightbox();
     }
 });
 
-// पिछली इमेज पर जाएं (स्लाइडिंग लॉजिक - आपके पुराने कोड जैसा)
+// 4. पिछली इमेज पर जाएं (prev-btn)
 prevBtn.addEventListener('click', function() {
     let newIndex = currentIndex - 1;
     // अगर पहली इमेज पर हैं, तो अंतिम इमेज पर जाएं (लूप)
     if (newIndex < 0) {
-        newIndex = imagesData.length - 1;
+        newIndex = images.length - 1;
     }
     updateLightboxImage(newIndex);
 });
 
-// अगली इमेज पर जाएं (स्लाइडिंग लॉजिक - आपके पुराने कोड जैसा)
+// 5. अगली इमेज पर जाएं (next-btn)
 nextBtn.addEventListener('click', function() {
     let newIndex = currentIndex + 1;
     // अगर अंतिम इमेज पर हैं, तो पहली इमेज पर जाएं (लूप)
-    if (newIndex >= imagesData.length) {
+    if (newIndex >= images.length) {
         newIndex = 0;
     }
     updateLightboxImage(newIndex);
 });
 
-
-// कीबोर्ड नेविगेशन
+// 6. कीबोर्ड नेविगेशन (Optional - Esc, Left, Right Arrow)
 document.addEventListener('keydown', function(e) {
-    if (lightbox.style.display === 'flex') { // 'flex' चेक करें
+    if (lightbox.style.display === 'block') {
         if (e.key === 'Escape') {
             closeLightbox();
         } else if (e.key === 'ArrowLeft') {
-            prevBtn.click();
+            prevBtn.click(); // पिछली इमेज दिखाएं
         } else if (e.key === 'ArrowRight') {
-            nextBtn.click();
+            nextBtn.click(); // अगली इमेज दिखाएं
         }
     }
 });
-
-// DOM लोड होने पर गैलरी लोड करें
-document.addEventListener('DOMContentLoaded', loadGalleryImages);
