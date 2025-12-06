@@ -7,56 +7,70 @@
 <meta name="description" content="Dua before sleeping in Hindi English with meaning. सोने से पहले की दुआ।">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Share Preview -->
 <meta property="og:title" content="Before Sleeping Dua | सोने की दुआ">
 <meta property="og:description" content="सोने से पहले की दुआ – Save & Share.">
 <meta property="og:image" content="https://USERNAME.github.io/best-faith-dua/assets/images/dua1.jpg">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://USERNAME.github.io/best-faith-dua/image/dua1.html">
-
 <meta name="twitter:card" content="summary_large_image">
 
 <style>
 body { margin:0; background:#000; height:100vh; display:flex; align-items:center; justify-content:center; }
-img { width:100%; }
+img { width:100%; max-width: 100%; height: auto; display: block; }
+
+/* Fixed Back Button */
 .back-btn {
   position:fixed; top:10px; left:10px;
-  background:#fff1; color:#fff;
+  background:#fff3; color:#fff;
   padding:6px 10px; border-radius:6px; text-decoration:none;
+  font-size: 16px;
+  z-index: 10;
 }
-.share-btn {
-  position:fixed; bottom:20px; right:20px;
-  background:#0a0; color:#fff;  /* 🟢 Green */
+
+/* Floating Download Button (Orange/Gold) */
+.download-btn {
+  position:fixed; bottom:90px; right:20px; 
+  background:#f60; color:#fff;  
   width:55px; height:55px; border-radius:50%;
-  font-size:20px; border:none;
+  font-size:24px; border:none;
   display:flex; justify-content:center; align-items:center;
   box-shadow:0 0 10px #0009;
+  z-index: 10;
+  cursor: pointer;
 }
-.nav-btn {
-  position:fixed; top:50%; transform:translateY(-50%);
-  background:#fff1; color:#fff;
-  padding:10px 14px; border-radius:10px;
-  font-size:20px; user-select:none;
+
+/* Floating Share Button (Green) */
+.share-btn {
+  position:fixed; bottom:20px; right:20px;
+  background:#0a0; color:#fff; 
+  width:55px; height:55px; border-radius:50%;
+  font-size:24px; border:none;
+  display:flex; justify-content:center; align-items:center;
+  box-shadow:0 0 10px #0009;
+  z-index: 10;
+  cursor: pointer;
 }
-.nav-btn:active { transform:scale(0.9); }
-.left { left:10px; }
-.right { right:10px; }
 </style>
 
 </head>
 <body>
 
-<a class="back-btn" href="index.html">⬅</a>
+<a class="back-btn" href="index.html">⬅ Gallery</a>
 <img src="dua2.jpg" alt="Before Sleeping Dua">
 
+<button class="download-btn" onclick="downloadDua('dua1.jpg')">⬇</button> 
 <button class="share-btn" onclick="shareDua()">🔄</button>
-<div class="nav-btn left" onclick="goPrev()">⬅</div>
-<div class="nav-btn right" onclick="goNext()">➡</div>
 
-<!-- Shared Viewer features -->
 <script src="viewer.js"></script>
 
-<!-- Schema Markup -->
+<script>
+  // Browser History me index.html ko add karein, jisse back button index.html par chala jaye.
+  history.pushState(null, null, location.href);
+  window.onpopstate = function () {
+    location.href = 'index.html'; // seedha homepage par bhej de
+  };
+</script>
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org/",
