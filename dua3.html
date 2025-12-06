@@ -67,6 +67,12 @@ img { width:100%; }
   "url": window.location.href
 }
 </script>
-
+<script>window.onload = () => {
+  history.replaceState(null, null, location.href);
+  window.addEventListener("popstate", () => {
+    window.location.href = "index.html";
+  });
+};
+</script>
 </body>
 </html>
