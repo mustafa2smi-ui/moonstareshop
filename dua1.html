@@ -55,6 +55,13 @@ img { width:100%; }
 
 <!-- Shared Viewer features -->
 <script src="viewer.js"></script>
+<script>
+  // Browser History me index.html ko add karein, jisse back button index.html par chala jaye.
+  history.pushState(null, null, location.href);
+  window.onpopstate = function () {
+    location.href = 'index.html'; // seedha homepage par bhej de
+  };
+</script>
 
 <!-- Schema Markup -->
 <script type="application/ld+json">
