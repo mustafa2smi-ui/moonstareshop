@@ -1,139 +1,144 @@
-let duasData = [];
+/**
+ * viewer-dynamic.js
+ * Category-wise Duas Loader and Smoother Swiping Logic
+ */
+
+let duasData = []; // Full raw data will be stored here
+let filteredDuas = []; // Category-specific data
 let currentDuaIndex = 0;
 
-// ===================================
-// 1. DATA LOADING AND INITIALIZATION
-// ===================================
-
+// Function to fetch data and initialize the viewer
 async function loadDuas() {
     try {
         const response = await fetch('duas.json');
         duasData = await response.json();
-        
-        // Find initial Dua based on URL (e.g., viewer.html?slug=dua1.html)
+
         const urlParams = new URLSearchParams(window.location.search);
-        const initialSlug = urlParams.get('slug'); 
+        const categoryFilter = urlParams.get('category'); // e.g., 'daily'
+        const initialSlug = urlParams.get('slug'); // e.g., 'dua-before-sleep.html'
         
+        // 1. Filter the Duas by Category
+        if (categoryFilter) {
+            filteredDuas = duasData.filter(d => d.category === categoryFilter);
+            if (filteredDuas.length === 0) {
+                // Fallback if category is valid but no duas found
+                filteredDuas = duasData;
+                alert('Warning: No duas found for this category. Showing all Duas.');
+            }
+        } else {
+            // Fallback: If no category is specified, show all Duas.
+            filteredDuas = duasData;
+        }
+
+        // 2. Find the index of the initial slug within the FILTERED array
         if (initialSlug) {
-            const index = duasData.findIndex(d => d.slug === initialSlug);
+            const index = filteredDuas.findIndex(d => d.slug === initialSlug);
             if (index !== -1) {
                 currentDuaIndex = index;
             }
         }
-        
-        updatePageContent(false); // Initial load, don't change history state, just replace
+
+        // Initialize content and history (without pushing)
+        updatePageContent(false);
+
     } catch (error) {
-        console.error("Duas data load nahi ho paya:", error);
-        // Display an error message to the user if data fails to load
-        document.getElementById('duaContainer').innerHTML = "<p style='color:#fff; padding:20px;'>Content loading failed. Please check the 'duas.json' file.</p>";
+        console.error('Error loading Duas or JSON:', error);
+        document.getElementById('content-area').innerHTML = '<p style="text-align:center; color:red;">Content loading error. Please check duas.json file.</p>';
     }
 }
 
-// ===================================
-// 2. CONTENT UPDATE (NO BLINKING)
-// ===================================
 
+// Function to update the HTML content with the current Dua
 function updatePageContent(pushToHistory = true) {
-    const dua = duasData[currentDuaIndex];
-    if (!dua) return;
+    if (filteredDuas.length === 0) return;
 
-    // A. DOM Content Update (Smoothness)
-    document.getElementById('duaImage').src = dua.image;
-    
-    // Text Content
-    document.getElementById('duaH1').innerText = dua.title.split('|')[0].trim();
-    document.getElementById('duaArabic').innerHTML = dua.arabic;
-    document.getElementById('duaHindi').innerHTML = `**हिंदी अनुवाद:** ${dua.hindi_trans}`;
-    document.getElementById('duaExplanation').innerHTML = `<h2>इस दुआ का महत्व</h2><p>${dua.explanation}</p>`;
+    // Use the Dua object from the FILTERED array
+    const dua = filteredDuas[currentDuaIndex];
+    const categoryFilter = new URLSearchParams(window.location.search).get('category');
 
-    // B. Meta Tags Update (Title, Description)
-    document.getElementById('pageTitle').innerText = dua.title;
-    document.getElementById('metaDescription').content = dua.description;
-    
-    // C. History API for Sharing Link (Changes URL without refreshing)
-    const newUrl = `viewer.html?slug=${dua.slug}`;
+    // Update the main content
+    document.getElementById('dua-title').innerText = dua.title;
+    document.getElementById('dua-image').src = 'images/' + dua.image;
+    document.getElementById('dua-image').alt = dua.title;
+    document.getElementById('arabic-text').innerHTML = dua.arabic;
+    document.getElementById('transliteration-text').innerHTML = `**Transliteration:** ${dua.hindi_transliteration}`;
+    document.getElementById('translation-text').innerHTML = `**Translation:** ${dua.translation}`;
+
+    // Update sharing data (optional: add share link logic here)
+
+    // Update the URL in the browser history for deep linking (Crucial for SEO)
     if (pushToHistory) {
-        // Swiping ke liye, naya state push karein
-        history.pushState({ index: currentDuaIndex, slug: dua.slug }, dua.title, newUrl);
-    } else {
-        // Initial load ya Mobile Back Button fix ke liye
-        history.replaceState({ index: currentDuaIndex, slug: dua.slug }, dua.title, newUrl);
+        const newUrl = `viewer.html?category=${categoryFilter || dua.category}&slug=${dua.slug}`;
+        window.history.pushState({ path: newUrl, index: currentDuaIndex }, dua.title, newUrl);
     }
-    
-    // Note: OG Tags (for Facebook/WhatsApp) cannot be updated via JS alone for sharing preview. 
-    // They must be present when the page is first loaded by the scraper.
-    // However, the correct URL is set for sharing.
 }
 
-// ===================================
-// 3. NAVIGATION (SMOOTH LOOPING)
-// ===================================
 
+// Navigation: Go to the next Dua in the FILTERED list
 function goNext() {
-    currentDuaIndex = (currentDuaIndex + 1) % duasData.length; // Loop forward
+    // Navigate within the filteredDuas array
+    currentDuaIndex = (currentDuaIndex + 1) % filteredDuas.length; 
     updatePageContent();
 }
 
+// Navigation: Go to the previous Dua in the FILTERED list
 function goPrev() {
-    // Ye backward looping ke liye hai
-    currentDuaIndex = (currentDuaIndex - 1 + duasData.length) % duasData.length; 
+    // Navigate within the filteredDuas array
+    currentDuaIndex = (currentDuaIndex - 1 + filteredDuas.length) % filteredDuas.length; 
     updatePageContent();
 }
 
-// Touch gesture (Touch Swipe Logic)
-let startX = 0;
-document.addEventListener('touchstart', e => startX = e.changedTouches[0].screenX, { passive: true }); // passive: true for performance
-document.addEventListener('touchend', e => {
-  let endX = e.changedTouches[0].screenX;
-  const deltaX = endX - startX;
-  
-  if (deltaX < -50) goNext(); // Swipe Left -> Next
-  if (deltaX > 50) goPrev(); // Swipe Right -> Previous
-}, { passive: true });
 
-// Mobile Back Button Fix / History Back
-window.onpopstate = function (event) {
-    if (event.state && event.state.slug) {
-        // Agar history state hai to us par jayein (forward/backward button)
-        const index = duasData.findIndex(d => d.slug === event.state.slug);
-        if (index !== -1) {
-            currentDuaIndex = index;
-            updatePageContent(false); // Don't push state again
-        }
+// --- Swiping and Touch Logic (Remains mostly the same, but calls goNext/goPrev) ---
+
+let touchStartX = 0;
+let touchEndX = 0;
+const minSwipeDistance = 50; // Minimum pixels for a successful swipe
+
+document.addEventListener('touchstart', e => {
+    touchStartX = e.touches[0].clientX;
+});
+
+document.addEventListener('touchend', e => {
+    touchEndX = e.changedTouches[0].clientX;
+    handleSwipe();
+});
+
+function handleSwipe() {
+    const diff = touchEndX - touchStartX;
+
+    if (Math.abs(diff) < minSwipeDistance) {
+        return; // Not a swipe
+    }
+
+    if (diff > 0) {
+        // Swiped right (Go to previous dua)
+        goPrev();
     } else {
-        // Agar user pehli baar back button dabata hai ya history khaali hai, to homepage par jayein
-        location.href = 'index.html'; 
+        // Swiped left (Go to next dua)
+        goNext();
+    }
+}
+
+// Keyboard navigation (optional)
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') {
+        goPrev();
+    } else if (e.key === 'ArrowRight') {
+        goNext();
+    }
+});
+
+// Load the Duas when the page is ready
+loadDuas();
+
+// Popstate handler for back/forward browser buttons
+window.onpopstate = function(event) {
+    if (event.state && event.state.index !== undefined) {
+        currentDuaIndex = event.state.index;
+        updatePageContent(false);
+    } else {
+        // Fallback to reload if state is missing
+        loadDuas();
     }
 };
-
-// ===================================
-// 4. FLOATING BUTTON LOGIC
-// ===================================
-
-// Share Button Logic (Linked to viewer.html)
-function shareCurrentDua() {
-    const dua = duasData[currentDuaIndex];
-    const url = window.location.href; // History API se updated URL
-    
-    if (navigator.share) {
-        navigator.share({ title: dua.title, text: dua.description, url });
-    } else {
-        navigator.clipboard.writeText(url);
-        alert("Link copied! You can now share it.");
-    }
-}
-
-// Download Button Logic
-function downloadCurrentDua() {
-  const dua = duasData[currentDuaIndex];
-  const url = dua.image; // Use the image path
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', url); 
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-
-// Start the application
-loadDuas();
