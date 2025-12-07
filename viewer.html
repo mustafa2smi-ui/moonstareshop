@@ -23,6 +23,24 @@ body { margin:0; background:#000; height:100vh; display:block; }
 .arabic-text { font-size: 28px; text-align: right; margin: 15px 0; font-family: 'Times New Roman', serif; direction: rtl; }
 .explanation-box p { font-size: 16px; margin: 10px 0; line-height: 1.6; text-align: justify; }
 
+/* 💥 New Header Bar Styling 💥 */
+.dua-viewer-header {
+    /* Fixed position to stay at the top */
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    /* Styling for the bar */
+    background: #000; 
+    color: #4CAF50; /* Green text color for visibility */
+    text-align: center;
+    padding: 10px 0;
+    font-size: 16px;
+    font-weight: bold;
+    /* Border to make it look like a clear bar */
+    border-bottom: 2px solid #333; 
+    z-index: 99; /* Z-index set lower than back-btn (100) */
+}
 /* Fixed Buttons */
 .back-btn { position:fixed; top:10px; left:10px; background:#fff3; color:#fff; padding:6px 10px; border-radius:6px; text-decoration:none; font-size: 16px; z-index: 100; }
 .download-btn { position:fixed; bottom:90px; right:20px; background:#f60; color:#fff; width:55px; height:55px; border-radius:50%; font-size:24px; border:none; display:flex; justify-content:center; align-items:center; box-shadow:0 0 10px #0009; z-index: 100; cursor: pointer; }
@@ -33,7 +51,9 @@ body { margin:0; background:#000; height:100vh; display:block; }
 <body>
 
 <a class="back-btn" href="index.html">⬅ Gallery</a>
-
+<header class="dua-viewer-header">
+    Bismillahhirrahmannirrahim
+</header>
 <div id="duaContainer">
   <img id="duaImage" src="" alt="Islamic Dua Image">
   
