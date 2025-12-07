@@ -1,27 +1,26 @@
 /**
  * viewer-dynamic.js
- * Category-wise Duas Loader and Smoother Swiping Logic
+ * Category-wise Duas Loader and Smoother Swiping Logic - FIX v3
  */
 
-let duasData = []; // Full raw data will be stored here
-let filteredDuas = []; // Category-specific data
+let duasData = []; 
+let filteredDuas = []; 
 let currentDuaIndex = 0;
 
-// Function to fetch data and initialize the viewer
 async function loadDuas() {
     try {
         const response = await fetch('duas.json');
         duasData = await response.json();
 
         const urlParams = new URLSearchParams(window.location.search);
-        const categoryFilter = urlParams.get('category'); // e.g., 'daily'
-        const initialSlug = urlParams.get('slug'); // e.g., 'dua-before-sleep.html'
+        const categoryFilter = urlParams.get('category'); 
+        const initialSlug = urlParams.get('slug'); 
         
         // 1. Filter the Duas by Category
         if (categoryFilter) {
             filteredDuas = duasData.filter(d => d.category === categoryFilter);
             if (filteredDuas.length === 0) {
-                // Fallback if category is valid but no duas found
+                // Fallback: If no duas found for the category, show all.
                 filteredDuas = duasData;
                 alert('Warning: No duas found for this category. Showing all Duas.');
             }
@@ -38,62 +37,82 @@ async function loadDuas() {
             }
         }
 
+        // Check if filteredDuas is still empty, and if so, prevent errors
+        if (filteredDuas.length === 0) {
+             console.error('No Duas available in duas.json.');
+             document.getElementById('duaContainer').innerHTML = '<p style="text-align:center; color:red; margin-top: 100px;">Data not found in duas.json.</p>';
+             return;
+        }
+
         // Initialize content and history (without pushing)
         updatePageContent(false);
 
     } catch (error) {
         console.error('Error loading Duas or JSON:', error);
-        document.getElementById('content-area').innerHTML = '<p style="text-align:center; color:red;">Content loading error. Please check duas.json file.</p>';
+        // Changed ID from 'content-area' (not present) to 'duaContainer'
+        document.getElementById('duaContainer').innerHTML = '<p style="text-align:center; color:red; margin-top: 100px;">Content loading error. Please check duas.json file.</p>';
     }
 }
 
 
-// Function to update the HTML content with the current Dua
 function updatePageContent(pushToHistory = true) {
     if (filteredDuas.length === 0) return;
 
-    // Use the Dua object from the FILTERED array
     const dua = filteredDuas[currentDuaIndex];
     const categoryFilter = new URLSearchParams(window.location.search).get('category');
+    
+    // ===============================================
+    // 💥 FIX 1: Image Path and ID (Your main issue)
+    // 
+    // Image is in the root folder, so we use dua.image directly.
+    document.getElementById('duaImage').src = dua.image;
+    document.getElementById('duaImage').alt = dua.title;
+    
+    // 💥 FIX 2: Correcting IDs and JSON fields
+    // 
+    // Your duas.json uses: 'title', 'arabic', 'hindi_trans', 'explanation'
+    // Your viewer.html uses: 'pageTitle', 'metaDescription', 'duaH1', 'duaArabic', 'duaHindi', 'duaExplanation'
+    
+    // Update Meta and Title (from viewer.html)
+    document.getElementById('pageTitle').innerText = dua.title;
+    document.getElementById('metaDescription').content = dua.description;
+    
+    // Update Content (from viewer.html)
+    document.getElementById('duaH1').innerText = dua.title;
+    document.getElementById('duaArabic').innerHTML = dua.arabic;
+    
+    // Using the ID from viewer.html which holds the translation
+    document.getElementById('duaHindi').innerHTML = `**हिंदी:** ${dua.hindi_trans}`; 
+    
+    // Explanation Text
+    document.getElementById('duaExplanation').innerHTML = `<h2>Importance</h2><p>${dua.explanation}</p>`;
+    
+    // ===============================================
 
-    // Update the main content
-    document.getElementById('dua-title').innerText = dua.title;
-    document.getElementById('dua-image').src = dua.image;
-    document.getElementById('dua-image').alt = dua.title;
-    document.getElementById('arabic-text').innerHTML = dua.arabic;
-    document.getElementById('transliteration-text').innerHTML = `**Transliteration:** ${dua.hindi_transliteration}`;
-    document.getElementById('translation-text').innerHTML = `**Translation:** ${dua.translation}`;
-
-    // Update sharing data (optional: add share link logic here)
-
-    // Update the URL in the browser history for deep linking (Crucial for SEO)
+    // Update the URL in the browser history 
     if (pushToHistory) {
+        // We use the category from the URL params or the current dua object
         const newUrl = `viewer.html?category=${categoryFilter || dua.category}&slug=${dua.slug}`;
         window.history.pushState({ path: newUrl, index: currentDuaIndex }, dua.title, newUrl);
     }
 }
 
 
-// Navigation: Go to the next Dua in the FILTERED list
+// Navigation functions (goNext, goPrev) are correct
 function goNext() {
-    // Navigate within the filteredDuas array
     currentDuaIndex = (currentDuaIndex + 1) % filteredDuas.length; 
     updatePageContent();
 }
 
-// Navigation: Go to the previous Dua in the FILTERED list
 function goPrev() {
-    // Navigate within the filteredDuas array
     currentDuaIndex = (currentDuaIndex - 1 + filteredDuas.length) % filteredDuas.length; 
     updatePageContent();
 }
 
-
-// --- Swiping and Touch Logic (Remains mostly the same, but calls goNext/goPrev) ---
-
+// Swiping, Keyboard, and Popstate handlers are correct
 let touchStartX = 0;
 let touchEndX = 0;
-const minSwipeDistance = 50; // Minimum pixels for a successful swipe
+const minSwipeDistance = 50; 
 
 document.addEventListener('touchstart', e => {
     touchStartX = e.touches[0].clientX;
@@ -108,19 +127,16 @@ function handleSwipe() {
     const diff = touchEndX - touchStartX;
 
     if (Math.abs(diff) < minSwipeDistance) {
-        return; // Not a swipe
+        return; 
     }
 
     if (diff > 0) {
-        // Swiped right (Go to previous dua)
         goPrev();
     } else {
-        // Swiped left (Go to next dua)
         goNext();
     }
 }
 
-// Keyboard navigation (optional)
 document.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowLeft') {
         goPrev();
@@ -129,16 +145,13 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// Load the Duas when the page is ready
 loadDuas();
 
-// Popstate handler for back/forward browser buttons
 window.onpopstate = function(event) {
     if (event.state && event.state.index !== undefined) {
         currentDuaIndex = event.state.index;
         updatePageContent(false);
     } else {
-        // Fallback to reload if state is missing
         loadDuas();
     }
 };
