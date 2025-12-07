@@ -1,90 +1,108 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
-<meta charset="UTF-8">
-<title>Best Faith Dua Gallery | Islamic Prayers</title>
-<meta name="description" content="A beautiful Islamic Dua images collection in Hindi and English for sharing and learning.">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Best Faith Dua • Islamic Gallery</title>
+    <style>
+        /* General Styles */
+        body { 
+            font-family: Arial, sans-serif; 
+            margin: 0; 
+            background: #111; /* Dark background */
+            color: #fff; 
+            min-height: 100vh;
+        }
+        .container { max-width: 1000px; margin: auto; padding: 20px; }
+        .header { text-align: center; padding: 20px 0; }
+        .header h1 { margin: 0; font-size: 2em; color: #4CAF50; }
+        .header p { margin-top: 5px; opacity: 0.8; }
+        
+        /* Category Grid Styles */
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+        .category-card {
+            background: #222;
+            border-radius: 12px;
+            overflow: hidden;
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            min-height: 150px;
+        }
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+        .category-card h2 {
+            margin: 0;
+            font-size: 1.5em;
+            text-align: center;
+        }
+        
+        /* Footer Styles */
+        .footer { 
+            text-align: center; 
+            padding: 20px; 
+            border-top: 1px solid #333; 
+            margin-top: 30px;
+        }
+        .footer a { 
+            color: #4CAF50; 
+            text-decoration: none; 
+            margin: 0 10px; 
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+        .footer a:hover { opacity: 1; }
 
-<style>
-body { font-family: Arial; margin:0; background:#111; color:#fff; }
-/* --- Header Styles --- */
-.header {
-  display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; 
-  background: #000; box-shadow: 0 2px 4px #0005; border-bottom: 1px solid #333; 
-  position: sticky; top: 0; z-index: 1000;
-}
-.header h1 { font-size: 20px; margin: 0; color: #fff; }
-.menu-container { position: relative; }
-.menu-btn { font-size: 25px; background: none; border: none; color: #fff; cursor: pointer; }
-.dropdown-menu { display: none; position: absolute; top: 100%; right: 0;
-  background: #222; min-width: 150px; box-shadow: 0 8px 16px 0 #0003; z-index: 1; border-radius: 4px; padding: 5px 0;
-}
-.dropdown-menu a { color: #fff; padding: 12px 16px; text-decoration: none; display: block; font-size: 14px; }
-.dropdown-menu a:hover { background-color: #333; }
-.menu-container:hover .dropdown-menu { display: block; }
-
-/* --- Gallery Styles (Mobile-First) --- */
-.gallery { 
-  display:grid; grid-template-columns: 1fr; gap:8px; padding:10px; 
-}
-.gallery-item { text-align: center; background: #222; border-radius: 6px; padding: 0; }
-.gallery-item img { width:100%; height: auto; border-radius:6px 6px 0 0; display: block; }
-.gallery-item h2 { font-size: 14px; margin: 10px 10px 5px; text-align: left; }
-.gallery-item p { font-size: 12px; margin: 5px 10px 10px; opacity: 0.7; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-@media (min-width: 600px) {
-  .gallery { grid-template-columns: repeat(2, 1fr); }
-}
-a { text-decoration:none; color: inherit; }
-
-/* --- Footer Styles --- */
-.footer {
-  text-align:center; font-size:12px; padding:15px; opacity:0.8;
-  background: #000; margin-top: 10px; border-top: 1px solid #333; 
-}
-.introduction { padding: 15px; text-align: center; background: #222; margin-bottom: 8px; }
-</style>
+    </style>
 </head>
-
 <body>
-<header class="header">
-  <a href="index.html" style="text-decoration:none;"><h1>🕋 Best Faith Dua</h1></a>
-  <div class="menu-container">
-    <button class="menu-btn">☰</button>
-    <div class="dropdown-menu">
-      <a href="#">About Us</a>
-      <a href="#">Contact</a>
-      <a href="#">Privacy Policy</a>
-    </div>
-  </div>
-</header>
 
-<div class="introduction">
-    <p style="font-size: 14px; margin: 0; line-height: 1.6;">
-        **Best Faith Dua Gallery** में आपका स्वागत है। यहाँ आपको रोज़मर्रा की ज़िंदगी के लिए सबसे खूबसूरत और ज़रूरी इस्लामिक दुआओं का संग्रह मिलेगा। इन दुआओं को हिंदी और अंग्रेजी अनुवाद के साथ साझा करें और सीखें।
-    </p>
+<div class="container">
+    <header class="header">
+        <h1>Best Faith Dua</h1>
+        <p>सही हदीस और कुरान से चुनी गई रोज़मर्रा की दुआएँ</p>
+    </header>
+
+    <div class="category-grid">
+        <a href="viewer.html?category=daily&slug=dua-before-sleep.html" class="category-card">
+            <h2>🌙 रोज़मर्रा की दुआएँ</h2>
+        </a>
+
+        <a href="viewer.html?category=salah&slug=dua-for-ruku.html" class="category-card">
+            <h2>🕌 नमाज़ (सलाह) की दुआएँ</h2>
+        </a>
+        
+        <a href="viewer.html?category=travel&slug=dua-for-travel.html" class="category-card">
+            <h2>✈️ सफर (Travel) की दुआएँ</h2>
+        </a>
+         <a href="viewer.html?category=protection&slug=dua-for-protection.html" class="category-card">
+            <h2>🛡️ हिफाज़त (Protection) की दुआएँ</h2>
+        </a>
+    </div>
 </div>
 
-<div class="gallery">
-  <a href="viewer.html?slug=dua1.html" class="gallery-item">
-    <img src="dua1.jpg" alt="Before Sleeping Dua">
-    <h2>Before Sleeping Dua | सोने की दुआ</h2>
-    <p>सोने से पहले की दुआ और इसका संक्षिप्त मतलब।</p>
-  </a>
+<footer class="footer">
+    <p style="margin: 5px 0;">
+        <a href="about.html">About Us</a> | 
+        <a href="contact.html">Contact Us</a> | 
+        <a href="privacy.html">Privacy Policy</a>
+    </p>
+    <p style="margin: 5px 0; opacity: 0.6;">
+        © Best Faith Dua • Islamic Gallery
+    </p>
+</footer>
 
-  <a href="viewer.html?slug=dua2.html" class="gallery-item">
-    <img src="dua2.jpg" alt="Waking Up Dua">
-    <h2>Waking Up Dua | जागने की दुआ</h2>
-    <p>नींद से जागने के बाद की दुआ और इसका हिंदी अनुवाद।</p>
-  </a>
-  
-  <a href="viewer.html?slug=dua3.html" class="gallery-item">
-    <img src="dua3.jpg" alt="Entering Home Dua">
-    <h2>Entering Home Dua | घर में प्रवेश</h2>
-    <p>घर के अंदर दाखिल होने से पहले पढ़ी जाने वाली दुआ।</p>
-  </a>
-  </div>
-
-<footer class="footer">© Best Faith Dua • Islamic Gallery</footer>
 </body>
 </html>
