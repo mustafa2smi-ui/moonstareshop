@@ -14,7 +14,7 @@
 
 <style>
 body { margin:0; background:#000; height:100vh; display:block; }
-#duaContainer { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; color: #fff; }
+/*#duaContainer { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; color: #fff; }*/
 #duaImage { width:100%; max-width: 600px; height: auto; display: block; }
 
 /* Text Content Styling */
@@ -42,9 +42,38 @@ body { margin:0; background:#000; height:100vh; display:block; }
     z-index: 99; /* Z-index set lower than back-btn (100) */
 }
 /* Fixed Buttons */
-.back-btn { position:fixed; top:10px; left:10px; background:#fff3; color:#fff; padding:6px 10px; border-radius:6px; text-decoration:none; font-size: 16px; z-index: 100; }
+/*.back-btn { position:fixed; top:10px; left:10px; background:#fff3; color:#fff; padding:6px 10px; border-radius:6px; text-decoration:none; font-size: 16px; z-index: 100; }*/
 .download-btn { position:fixed; bottom:90px; right:20px; background:#f60; color:#fff; width:55px; height:55px; border-radius:50%; font-size:24px; border:none; display:flex; justify-content:center; align-items:center; box-shadow:0 0 10px #0009; z-index: 100; cursor: pointer; }
 .share-btn { position:fixed; bottom:20px; right:20px; background:#0a0; color:#fff; width:55px; height:55px; border-radius:50%; font-size:24px; border:none; display:flex; justify-content:center; align-items:center; box-shadow:0 0 10px #0009; z-index: 100; cursor: pointer; }
+/* 💥 Adjusting existing elements to start below the header 💥 */
+
+/* Move Back Button below the new header (Change 1) */
+.back-btn { 
+    position: fixed; 
+    top: 45px; /* ADJUSTED: To move it below the new Bismillah bar */
+    left: 10px; 
+    background:#fff3; 
+    color:#fff; 
+    padding:6px 10px; 
+    border-radius:6px; 
+    text-decoration:none; 
+    font-size: 16px; 
+    z-index: 100; 
+}
+
+/* Push the Image and Content container down (Change 2) */
+#duaContainer { 
+    /* NEW: Add top margin equal to the height of the new header bar (~45px) */
+    margin-top: 45px; 
+    
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: flex-start; 
+    min-height: 100vh; 
+    color: #fff; 
+}
+
 </style>
 
 </head>
