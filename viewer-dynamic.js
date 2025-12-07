@@ -58,7 +58,7 @@ function updatePageContent(pushToHistory = true) {
 
     // Update the main content
     document.getElementById('dua-title').innerText = dua.title;
-    document.getElementById('dua-image').src = 'images/' + dua.image;
+    document.getElementById('dua-image').src = dua.image;
     document.getElementById('dua-image').alt = dua.title;
     document.getElementById('arabic-text').innerHTML = dua.arabic;
     document.getElementById('transliteration-text').innerHTML = `**Transliteration:** ${dua.hindi_transliteration}`;
