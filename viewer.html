@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<title id="pageTitle">Dua Viewer</title>
+<meta name="description" id="metaDescription" content="">
+<meta property="og:title" id="ogTitle" content="">
+<meta property="og:description" id="ogDescription" content="">
+<meta property="og:image" id="ogImage" content="">
+<meta property="og:url" id="ogUrl" content="">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body { margin:0; background:#000; height:100vh; display:block; }
+#duaContainer { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; color: #fff; }
+#duaImage { width:100%; max-width: 600px; height: auto; display: block; }
+
+/* Text Content Styling */
+#textContent { padding: 15px; max-width: 600px; width: 100%; box-sizing: border-box; }
+#duaH1 { font-size: 20px; text-align: center; margin: 15px 0; }
+.arabic-text { font-size: 28px; text-align: right; margin: 15px 0; font-family: 'Times New Roman', serif; direction: rtl; }
+.explanation-box p { font-size: 16px; margin: 10px 0; line-height: 1.6; text-align: justify; }
+
+/* Fixed Buttons */
+.back-btn { position:fixed; top:10px; left:10px; background:#fff3; color:#fff; padding:6px 10px; border-radius:6px; text-decoration:none; font-size: 16px; z-index: 100; }
+.download-btn { position:fixed; bottom:90px; right:20px; background:#f60; color:#fff; width:55px; height:55px; border-radius:50%; font-size:24px; border:none; display:flex; justify-content:center; align-items:center; box-shadow:0 0 10px #0009; z-index: 100; cursor: pointer; }
+.share-btn { position:fixed; bottom:20px; right:20px; background:#0a0; color:#fff; width:55px; height:55px; border-radius:50%; font-size:24px; border:none; display:flex; justify-content:center; align-items:center; box-shadow:0 0 10px #0009; z-index: 100; cursor: pointer; }
+</style>
+
+</head>
+<body>
+
+<a class="back-btn" href="index.html">⬅ Gallery</a>
+
+<div id="duaContainer">
+  <img id="duaImage" src="" alt="Islamic Dua Image">
+  
+  <div id="textContent">
+    <h1 id="duaH1"></h1>
+    <p id="duaArabic" class="arabic-text"></p>
+    <p id="duaHindi"></p>
+    
+    <hr style="border-color:#333; margin: 20px 0;">
+    
+    <div id="duaExplanation" class="explanation-box"></div>
+  </div>
+</div>
+
+<button class="download-btn" onclick="downloadCurrentDua()">⬇</button> 
+<button class="share-btn" onclick="shareCurrentDua()">🔄</button>
+
+<script src="viewer-dynamic.js"></script> 
+
+</body>
+</html>
