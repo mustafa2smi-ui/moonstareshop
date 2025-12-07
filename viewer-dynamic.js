@@ -2,7 +2,7 @@
  * viewer-dynamic.js
  * Category-wise Duas Loader and Smoother Swiping Logic - FIX v3
  */
-
+/*
 let duasData = []; 
 let filteredDuas = []; 
 let currentDuaIndex = 0;
@@ -53,6 +53,85 @@ async function loadDuas() {
         document.getElementById('duaContainer').innerHTML = '<p style="text-align:center; color:red; margin-top: 100px;">Content loading error. Please check duas.json file.</p>';
     }
 }
+*/
+    /**
+ * viewer-dynamic.js (FIX: Strict Validation & Coming Soon Message)
+ */
+
+let duasData = []; 
+let filteredDuas = []; 
+let currentDuaIndex = 0;
+
+async function loadDuas() {
+    const duaContainer = document.getElementById('duaContainer');
+    
+    try {
+        const response = await fetch('duas.json');
+        duasData = await response.json();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryFilter = urlParams.get('category'); 
+        const initialSlug = urlParams.get('slug'); 
+        
+        // --- Strict Validation Check ---
+        if (!categoryFilter || !initialSlug) {
+            // अगर URL में category या slug MISSING है
+            showComingSoon(duaContainer, "URL में श्रेणी या सामग्री (slug) मौजूद नहीं है।");
+            return;
+        }
+
+        // 1. Filter the Duas by Category
+        filteredDuas = duasData.filter(d => d.category === categoryFilter);
+
+        // 2. Find the index of the initial slug within the FILTERED array
+        let index = -1;
+        if (filteredDuas.length > 0) {
+            index = filteredDuas.findIndex(d => d.slug === initialSlug);
+        }
+
+        // --- Core Validation Check (If no content found) ---
+        if (index === -1) {
+            // अगर category या slug गलत है, या फिल्टर में कुछ नहीं मिला 
+            showComingSoon(duaContainer, `यह दुआ (Slug: ${initialSlug}, Category: ${categoryFilter}) अभी अपलोड नहीं हुई है।`);
+            return; 
+        }
+
+        // Content Found: Set index and load page
+        currentDuaIndex = index;
+        updatePageContent(false);
+
+    } catch (error) {
+        // अगर duas.json फ़ाइल लोड ही नहीं हो पाई (e.g., File Not Found)
+        console.error('Error loading Duas or JSON:', error);
+        showComingSoon(duaContainer, "डेटाबेस फ़ाइल (duas.json) लोड नहीं हो पाई। कृपया फ़ाइल पाथ जांचें।");
+    }
+}
+
+// 💥 New Function: Displays the "Coming Soon" message and hides buttons
+function showComingSoon(containerElement, detailedMessage) {
+    // Hide floating buttons
+    document.querySelector('.download-btn').style.display = 'none';
+    document.querySelector('.share-btn').style.display = 'none';
+
+    // Display the main message
+    containerElement.innerHTML = `
+        <div style="text-align:center; padding: 50px; color: #FFF; margin-top: 100px;">
+            <h2 style="color: #4CAF50;">⏳ जल्द ही अपलोड किया जाएगा (Coming Soon)</h2>
+            <p style="font-size: 1.1em; margin-top: 20px;">
+                क्षमा करें, यह सामग्री (Dua) अभी उपलब्ध नहीं है।
+            </p>
+            <p style="font-size: 0.9em; opacity: 0.7; margin-top: 30px;">
+                (Admin Message: ${detailedMessage})
+            </p>
+            <a href="index.html" style="color: #007bff; text-decoration: none; display: block; margin-top: 40px;">⬅ गैलरी पर वापस जाएँ</a>
+        </div>
+    `;
+}
+
+// ... (Rest of the functions: updatePageContent, goNext, goPrev, Swiping logic remains the same) ...
+
+// IMPORTANT: updatePageContent, goNext, goPrev, swiping functions
+// must remain UNCHANGED, as they rely on filteredDuas array.
 
 
 function updatePageContent(pushToHistory = true) {
