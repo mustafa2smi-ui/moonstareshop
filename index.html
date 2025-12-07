@@ -76,17 +76,15 @@
     </header>
 
     <div class="category-grid">
-        <a href="#" class="category-card" onclick="goToViewer('daily', 'dua1.html')">
+        <!--<a href="#" class="category-card" onclick="goToViewer('daily', 'dua1.html')">-->
+            <a href="viewer.html?category=daily&slug=dua1.html" class="category-card">
             <h2>🌙 रोज़मर्रा की दुआएँ</h2>
-        </a>
-
-        <a href="#" class="category-card" onclick="goToViewer('daily', 'dua2.html')">
-            
-
+            </a>
+            <a href="viewer.html?category=salah&slug=dua2.html" class="category-card">
             <h2>🕌 नमाज़ (सलाह) की दुआएँ</h2>
         </a>
         
-        <a href="viewer.html?category=travel&slug=dua3.html" class="category-card">
+        <a href="viewer.html?category=evening&slug=dua3.html" class="category-card">
             <h2>✈️ सफर (Travel) की दुआएँ</h2>
         </a>
          <a href="viewer.html?category=protection&slug=dua-for-protection.html" class="category-card">
@@ -107,6 +105,7 @@
 </footer>
 
 </body>
+    <!--
     <script>
 function goToViewer(category, slug) {
     const viewerUrl = `viewer.html?category=${category}&slug=${slug}`;
@@ -126,4 +125,5 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.opacity = 1;
 });
     </script>
+    -->
 </html>
