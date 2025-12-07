@@ -76,11 +76,13 @@
     </header>
 
     <div class="category-grid">
-        <a href="viewer.html?category=daily&slug=dua1.html" class="category-card">
+        <a href="#" class="category-card" onclick="goToViewer('daily', 'dua1.html')">
             <h2>🌙 रोज़मर्रा की दुआएँ</h2>
         </a>
 
-        <a href="viewer.html?category=salah&slug=dua2.html" class="category-card">
+        <a href="#" class="category-card" onclick="goToViewer('daily', 'dua2.html')">
+            
+
             <h2>🕌 नमाज़ (सलाह) की दुआएँ</h2>
         </a>
         
@@ -105,4 +107,23 @@
 </footer>
 
 </body>
+    <script>
+function goToViewer(category, slug) {
+    const viewerUrl = `viewer.html?category=${category}&slug=${slug}`;
+
+    // CSS Transition effect: Fade out current page (optional but recommended)
+    document.body.style.opacity = 0;
+
+    // Navigate after a short delay to allow fade-out
+    setTimeout(() => {
+        window.location.href = viewerUrl;
+    }, 150); // 150 milliseconds delay
+}
+
+// Optional: Fade in when page loads (makes the initial load smoother)
+document.addEventListener('DOMContentLoaded', () => {
+    document.body.style.transition = 'opacity 0.15s ease-in-out';
+    document.body.style.opacity = 1;
+});
+    </script>
 </html>
